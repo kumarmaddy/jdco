@@ -47,31 +47,45 @@ section {
     margin-bottom: 40px;
 }
 
-#home h2, #contact h2 {
+#home .tagline {
+    font-size: 1.1rem;
+    font-weight: bold; /* Bold tagline */
+    margin-bottom: 20px;
+}
+
+#home .services-header {
+    font-size: 1.3rem;
+    font-weight: bold; /* Bold services header */
+    margin: 20px 0 10px;
+}
+
+#contact h2 {
     font-size: 1.5rem;
     margin-bottom: 15px;
 }
 
-#home p {
-    font-size: 1rem;
-    margin-bottom: 20px;
-}
-
-#home h3, #contact h3 {
-    font-size: 1.3rem;
-    margin: 20px 0 10px;
-    font-weight: normal;
-}
-
-#home ul {
+#home .services-list {
     list-style: none;
-    display: inline-block; /* Centers the list horizontally */
-    text-align: left; /* Keeps list items left-aligned within the centered block */
+    margin: 0 auto;
+    padding: 0;
+    display: table;
 }
 
-#home ul li {
+#home .services-list li {
     font-size: 1rem;
     margin: 8px 0;
+    text-align: center;
+}
+
+#contact .contact-info {
+    font-size: 1.3rem;
+    font-weight: normal;
+    margin: 10px 0;
+}
+
+#contact .contact-info span {
+    color: #0056b3; /* Blue color for distinction */
+    font-weight: 500; /* Slightly heavier weight for emphasis */
 }
 
 footer {
@@ -93,10 +107,16 @@ footer {
     .container {
         padding: 20px 10px;
     }
-    #home h2, #contact h2 {
+    #home .tagline {
+        font-size: 1rem;
+    }
+    #home .services-header {
+        font-size: 1.1rem;
+    }
+    #contact h2 {
         font-size: 1.3rem;
     }
-    #home h3, #contact h3 {
+    #contact .contact-info {
         font-size: 1.1rem;
     }
 }
