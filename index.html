@@ -36,8 +36,13 @@
 
     <footer>
       <div class="container">
-        <p>© 2025 Jayadeva & Co. All rights reserved.</p>
+        <p>© <span id="year"></span> Jayadeva & Co. All rights reserved.</p>
       </div>
     </footer>
+
+    <script>
+      // Set the current year in the footer
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
   </body>
 </html>
