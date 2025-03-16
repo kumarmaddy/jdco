@@ -100,7 +100,10 @@ footer {
 }
 
 footer .container {
-    padding: 0; /* Override container padding for footer to keep it tight */
+    padding: 0; /* Tight padding for footer */
+    margin: 0 auto; /* Ensure centering */
+    width: 100%; /* Full width within footer */
+    max-width: 800px; /* Match main container */
 }
 
 /* Responsive Design */
@@ -125,5 +128,24 @@ footer .container {
     }
     #contact .contact-info {
         font-size: 1.1rem;
+    }
+    /* Ensure no bullets on mobile */
+    #home .services-list {
+        list-style: none;
+        list-style-type: none;
+    }
+    #home .services-list li {
+        list-style: none;
+        list-style-type: none;
+    }
+    /* Ensure footer stays centered */
+    footer {
+        text-align: center;
+    }
+    footer .container {
+        padding: 0;
+        margin: 0 auto;
+        width: 100%;
+        max-width: 800px;
     }
 }
