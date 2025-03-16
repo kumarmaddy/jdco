@@ -49,13 +49,13 @@ section {
 
 #home .tagline {
     font-size: 1.1rem;
-    font-weight: bold; /* Bold tagline */
-    margin-bottom: 20px;
+    font-weight: bold;
+    margin-bottom: 40px; /* Increased spacing below tagline */
 }
 
 #home .services-header {
     font-size: 1.3rem;
-    font-weight: bold; /* Bold services header */
+    font-weight: bold;
     margin: 20px 0 10px;
 }
 
@@ -84,8 +84,8 @@ section {
 }
 
 #contact .contact-info span {
-    color: #0056b3; /* Blue color for distinction */
-    font-weight: 500; /* Slightly heavier weight for emphasis */
+    color: #0056b3;
+    font-weight: 500;
 }
 
 footer {
