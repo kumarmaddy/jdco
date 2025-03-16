@@ -44,16 +44,82 @@ nav ul {
 
 section {
     text-align: center;
-    margin-bottom: 40px; /* Spacing between sections, e.g., Our Services to Contact Us */
+    margin-bottom: 40px;
 }
 
 #home .tagline {
     font-size: 1.1rem;
     font-weight: bold;
-    margin-bottom: 50px; /* Increased to be more than 40px */
+    margin-bottom: 50px;
 }
 
 #home .services-header {
     font-size: 1.3rem;
     font-weight: bold;
-    margin: 20px 0 10
+    margin: 20px 0 10px;
+}
+
+#contact h2 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+#home .services-list {
+    list-style: none;
+    list-style-type: none; /* Explicitly remove bullets */
+    margin: 0 auto;
+    padding: 0;
+    display: table;
+}
+
+#home .services-list li {
+    font-size: 1rem;
+    margin: 8px 0;
+    text-align: center;
+    list-style: none; /* Extra assurance for <li> elements */
+    list-style-type: none; /* Explicitly remove bullets from <li> */
+}
+
+#contact .contact-info {
+    font-size: 1.3rem;
+    font-weight: normal;
+    margin: 10px 0;
+}
+
+#contact .contact-info span {
+    color: #0056b3;
+    font-weight: 500;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    border-top: 1px solid #ddd;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    header h1 {
+        font-size: 1.5rem;
+    }
+    header h1:nth-child(2) {
+        font-size: 1rem;
+    }
+    .container {
+        padding: 20px 10px;
+    }
+    #home .tagline {
+        font-size: 1rem;
+    }
+    #home .services-header {
+        font-size: 1.1rem;
+    }
+    #contact h2 {
+        font-size: 1.3rem;
+    }
+    #contact .contact-info {
+        font-size: 1.1rem;
+    }
+}
