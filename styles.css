@@ -66,7 +66,7 @@ section {
 
 #home .services-list {
     list-style: none;
-    list-style-type: none; /* Explicitly remove bullets */
+    list-style-type: none;
     margin: 0 auto;
     padding: 0;
     display: table;
@@ -76,8 +76,8 @@ section {
     font-size: 1rem;
     margin: 8px 0;
     text-align: center;
-    list-style: none; /* Extra assurance for <li> elements */
-    list-style-type: none; /* Explicitly remove bullets from <li> */
+    list-style: none;
+    list-style-type: none;
 }
 
 #contact .contact-info {
@@ -97,6 +97,10 @@ footer {
     border-top: 1px solid #ddd;
     font-size: 0.9rem;
     color: #666;
+}
+
+footer .container {
+    padding: 0; /* Override container padding for footer to keep it tight */
 }
 
 /* Responsive Design */
