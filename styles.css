@@ -11,78 +11,77 @@ body {
     background: #fff;
 }
 
-.container {
-    width: 90%;
-    max-width: 800px;
-    margin: auto;
-    padding: 20px;
-}
-
 header {
+    text-align: center;
+    padding: 20px;
     border-bottom: 1px solid #ddd;
-    padding: 20px 0;
-    position: sticky;
-    top: 0;
-    background: #fff;
 }
 
 header h1 {
     font-size: 1.8rem;
-    display: inline-block;
+    color: #333;
+}
+
+header h1:nth-child(2) {
+    font-size: 1.2rem;
+    font-weight: normal;
+    margin-top: 5px;
 }
 
 nav {
-    float: right;
+    margin-top: 10px;
 }
 
 nav ul {
     list-style: none;
 }
 
-nav ul li {
-    display: inline;
-    margin-left: 20px;
-}
-
-nav ul li a {
-    text-decoration: none;
-    color: #333;
-    font-size: 1rem;
-}
-
-nav ul li a:hover {
-    color: #007bff;
-}
-
 section {
-    padding: 40px 0;
+    padding: 40px;
     text-align: center;
 }
 
-h2 {
+#home h2 {
     font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+#home p {
+    font-size: 1rem;
     margin-bottom: 20px;
-    color: #333;
 }
 
-p {
-    font-size: 1rem;
-    margin-bottom: 10px;
+#home h3 {
+    font-size: 1.3rem;
+    margin: 20px 0 10px;
 }
 
-ul {
+#home ul {
     list-style: none;
+    display: inline-block;
+    text-align: left;
 }
 
-ul li {
+#home ul li {
     font-size: 1rem;
+    margin: 8px 0;
+}
+
+#contact h2 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+#contact h3 {
+    font-size: 1rem;
+    font-weight: normal;
     margin: 10px 0;
 }
 
 footer {
-    border-top: 1px solid #ddd;
-    padding: 20px 0;
     text-align: center;
+    padding: 20px;
+    border-top: 1px solid #ddd;
     font-size: 0.9rem;
     color: #666;
 }
@@ -90,16 +89,18 @@ footer {
 /* Responsive Design */
 @media (max-width: 600px) {
     header h1 {
-        display: block;
-        text-align: center;
+        font-size: 1.5rem;
     }
-    nav {
-        float: none;
-        text-align: center;
-        margin-top: 10px;
+    header h1:nth-child(2) {
+        font-size: 1rem;
     }
-    nav ul li {
-        display: block;
-        margin: 10px 0;
+    section {
+        padding: 20px;
+    }
+    #home h2, #contact h2 {
+        font-size: 1.3rem;
+    }
+    #home h3 {
+        font-size: 1.1rem;
     }
 }
