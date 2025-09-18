@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact - Jayadeva & Co.</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="sticky-header">
+      <div class="container">
+        <div class="logo">
+          <h1>Jayadeva & Co.</h1>
+          <p>Chartered Accountants</p>
+        </div>
+        <nav>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="resources.html">Resources</a></li>
+            <li><a href="contact.html" class="active">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section id="contact">
+        <div class="container">
+          <h2>Contact Us</h2>
+          <p>Reach out to us for expert financial guidance and personalized services.</p>
+          <div class="contact-info">
+            <p><strong>Email:</strong> <a href="mailto:info@jayadeva.in">info@jayadeva.in</a></p>
+            <p><strong>Phone:</strong> +91 80 1963 2380</p>
+            <p><strong>Address:</strong> Bhive Platinum, Church Street, Bengaluru, Karnataka, India - 560001</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container">
+        <p>© <span id="year"></span> Jayadeva & Co. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script>
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>
