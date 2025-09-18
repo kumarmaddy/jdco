@@ -26,36 +26,96 @@
 
     <main>
       <section id="services">
-        <div class="container">
-          <h2>Our Services</h2>
-          <div class="services-grid">
-            <div class="service-item">
-              <h3>Statutory Audit</h3>
-              <p>Ensuring compliance with regulatory standards through thorough and independent audits.</p>
+        <div class="container services-container">
+          <div class="services-sidebar">
+            <h3>Our Services</h3>
+            <ul class="services-menu">
+              <li><button class="service-tab active" data-tab="statutory-audit">Statutory Audit</button></li>
+              <li><button class="service-tab" data-tab="internal-audit">Internal Audit</button></li>
+              <li><button class="service-tab" data-tab="taxation">Taxation</button></li>
+              <li><button class="service-tab" data-tab="audit-assurance">Audit & Assurance</button></li>
+              <li><button class="service-tab" data-tab="consulting">Consulting</button></li>
+              <li><button class="service-tab" data-tab="corporate-law">Corporate Law Services</button></li>
+              <li><button class="service-tab" data-tab="accounting">Accounting & Bookkeeping</button></li>
+            </ul>
+          </div>
+          <div class="services-content">
+            <div id="statutory-audit" class="service-details active">
+              <h2>Statutory Audit</h2>
+              <p>Our Statutory Audit services ensure compliance with the Companies Act, Income Tax Act, and other regulatory requirements. We conduct thorough and independent audits to provide accurate financial reporting, enhancing trust among stakeholders.</p>
+              <ul>
+                <li>Compliance with statutory regulations (Companies Act, Banking Regulation Act, etc.)</li>
+                <li>Comprehensive review of financial statements</li>
+                <li>Assurance for shareholders, investors, and regulatory bodies</li>
+                <li>Identification of discrepancies and recommendations for improvement</li>
+              </ul>
+              <p>Ideal for businesses seeking to meet legal requirements while maintaining transparency and credibility.</p>
             </div>
-            <div class="service-item">
-              <h3>Internal Audit</h3>
-              <p>Enhancing operational efficiency with detailed internal audits and risk assessments.</p>
+            <div id="internal-audit" class="service-details">
+              <h2>Internal Audit</h2>
+              <p>Our Internal Audit services focus on improving operational efficiency and risk management. We provide detailed assessments to identify risks, enhance internal controls, and optimize business processes.</p>
+              <ul>
+                <li>Risk assessment and mitigation strategies</li>
+                <li>Evaluation of internal controls and processes</li>
+                <li>Fraud detection and prevention</li>
+                <li>Customized recommendations for operational improvements</li>
+              </ul>
+              <p>Perfect for organizations aiming to strengthen governance and streamline operations.</p>
             </div>
-            <div class="service-item">
-              <h3>Taxation</h3>
-              <p>Expert guidance on direct and indirect taxes, including GST consulting and compliance.</p>
+            <div id="taxation" class="service-details">
+              <h2>Taxation</h2>
+              <p>We offer expert guidance on direct and indirect taxation, including GST consulting, tax planning, and compliance. Our services help clients minimize tax liabilities while ensuring adherence to regulations.</p>
+              <ul>
+                <li>GST registration, filing, and compliance</li>
+                <li>Income tax return preparation and filing</li>
+                <li>Tax planning and optimization for individuals and businesses</li>
+                <li>Support for tax audits, scrutiny assessments, and appeals</li>
+              </ul>
+              <p>Suitable for startups, SMEs, and individuals seeking efficient tax management.</p>
             </div>
-            <div class="service-item">
-              <h3>Audit & Assurance</h3>
-              <p>Providing assurance services to ensure financial accuracy and transparency.</p>
+            <div id="audit-assurance" class="service-details">
+              <h2>Audit & Assurance</h2>
+              <p>Our Audit & Assurance services provide independent verification of financial statements, ensuring accuracy and reliability. We help businesses maintain transparency and build trust with stakeholders.</p>
+              <ul>
+                <li>Financial statement audits and reviews</li>
+                <li>Compliance with Indian Accounting Standards (Ind AS)</li>
+                <li>Assurance for mergers, acquisitions, and due diligence</li>
+                <li>Specialized audits for trusts and non-profits</li>
+              </ul>
+              <p>Designed for companies requiring robust financial validation and compliance.</p>
             </div>
-            <div class="service-item">
-              <h3>Consulting</h3>
-              <p>Strategic consulting for business setup, financial planning, and regulatory compliance.</p>
+            <div id="consulting" class="service-details">
+              <h2>Consulting</h2>
+              <p>Our Consulting services offer strategic guidance for business growth, including business setup, financial planning, and regulatory compliance. We tailor solutions to meet your unique business goals.</p>
+              <ul>
+                <li>Business setup and incorporation advisory</li>
+                <li>Financial planning and budgeting</li>
+                <li>Compliance with FEMA, RBI, and other regulations</li>
+                <li>Strategic advisory for startups and SMEs</li>
+              </ul>
+              <p>Ideal for entrepreneurs and businesses aiming for sustainable growth.</p>
             </div>
-            <div class="service-item">
-              <h3>Corporate Law Services</h3>
-              <p>Advisory on corporate governance, compliance, and legal structuring.</p>
+            <div id="corporate-law" class="service-details">
+              <h2>Corporate Law Services</h2>
+              <p>We provide expert advisory on corporate governance, compliance, and legal structuring, ensuring your business adheres to all regulatory requirements.</p>
+              <ul>
+                <li>Company incorporation and secretarial services</li>
+                <li>Compliance with Companies Act and SEBI regulations</li>
+                <li>Advisory on mergers, acquisitions, and restructuring</li>
+                <li>Support for FDI and FEMA compliance</li>
+              </ul>
+              <p>Perfect for businesses navigating complex corporate legal frameworks.</p>
             </div>
-            <div class="service-item">
-              <h3>Accounting & Bookkeeping</h3>
-              <p>Streamlined accounting and bookkeeping services to keep your finances in order.</p>
+            <div id="accounting" class="service-details">
+              <h2>Accounting & Bookkeeping</h2>
+              <p>Our Accounting & Bookkeeping services ensure accurate financial records and compliance with regulatory standards, allowing you to focus on core business activities.</p>
+              <ul>
+                <li>Bookkeeping and financial record management</li>
+                <li>Payroll processing and compliance</li>
+                <li>Preparation of financial statements and reports</li>
+                <li>Cloud-based accounting solutions for efficiency</li>
+              </ul>
+              <p>Designed for small businesses and startups seeking cost-effective financial management.</p>
             </div>
           </div>
         </div>
@@ -68,6 +128,7 @@
       </div>
     </footer>
 
+    <script src="services.js"></script>
     <script>
       document.getElementById("year").textContent = new Date().getFullYear();
     </script>
