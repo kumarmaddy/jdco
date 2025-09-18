@@ -3,35 +3,56 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Jayadeva & Co.</title>
+    <title>Jayadeva & Co. - Chartered Accountants</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <header>
-      <h1>Jayadeva & Co.</h1>
-      <h1>Chartered Accountants</h1>
-      <nav>
-        <ul>
-          <!-- Navigation remains empty -->
-        </ul>
-      </nav>
+    <header class="sticky-header">
+      <div class="container">
+        <div class="logo">
+          <h1>Jayadeva & Co.</h1>
+          <p>Chartered Accountants</p>
+        </div>
+        <nav>
+          <ul>
+            <li><a href="index.html" class="active">Home</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="resources.html">Resources</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
     </header>
 
-    <div class="container">
-      <section id="home">
-        <h3 class="services-header">Our Services</h3>
-        <ul class="services-list">
-          <li>Taxation</li>
-          <li>Audit & Assurance</li>
-          <li>Consulting</li>
-        </ul>
+    <main>
+      <section id="hero">
+        <div class="container">
+          <h2>Your Trusted Partner in Financial Excellence</h2>
+          <p>Jayadeva & Co. provides expert audit, tax, and consulting services tailored for businesses and individuals.</p>
+          <a href="services.html" class="cta-button">Explore Our Services</a>
+        </div>
       </section>
 
-      <section id="contact">
-        <h2>Contact Us</h2>
-        <h3 class="contact-info">Email: <span>info@javadeva.in</span></h3>
+      <section id="overview">
+        <div class="container">
+          <h3>Why Choose Us?</h3>
+          <div class="overview-grid">
+            <div class="overview-item">
+              <h4>Expertise</h4>
+              <p>Our team of chartered accountants brings years of experience to ensure compliance and growth.</p>
+            </div>
+            <div class="overview-item">
+              <h4>Client-Centric</h4>
+              <p>We prioritize your needs, offering personalized solutions for your financial goals.</p>
+            </div>
+            <div class="overview-item">
+              <h4>Reliability</h4>
+              <p>Trust us for accurate, timely, and professional services to secure your financial future.</p>
+            </div>
+          </div>
+        </div>
       </section>
-    </div>
+    </main>
 
     <footer>
       <div class="container">
@@ -40,7 +61,6 @@
     </footer>
 
     <script>
-      // Set the current year in the footer
       document.getElementById("year").textContent = new Date().getFullYear();
     </script>
   </body>
