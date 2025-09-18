@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Services - Jayadeva & Co.</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="sticky-header">
+      <div class="container">
+        <div class="logo">
+          <h1>Jayadeva & Co.</h1>
+          <p>Chartered Accountants</p>
+        </div>
+        <nav>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="services.html" class="active">Services</a></li>
+            <li><a href="resources.html">Resources</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section id="services">
+        <div class="container">
+          <h2>Our Services</h2>
+          <div class="services-grid">
+            <div class="service-item">
+              <h3>Statutory Audit</h3>
+              <p>Ensuring compliance with regulatory standards through thorough and independent audits.</p>
+            </div>
+            <div class="service-item">
+              <h3>Internal Audit</h3>
+              <p>Enhancing operational efficiency with detailed internal audits and risk assessments.</p>
+            </div>
+            <div class="service-item">
+              <h3>Taxation</h3>
+              <p>Expert guidance on direct and indirect taxes, including GST consulting and compliance.</p>
+            </div>
+            <div class="service-item">
+              <h3>Audit & Assurance</h3>
+              <p>Providing assurance services to ensure financial accuracy and transparency.</p>
+            </div>
+            <div class="service-item">
+              <h3>Consulting</h3>
+              <p>Strategic consulting for business setup, financial planning, and regulatory compliance.</p>
+            </div>
+            <div class="service-item">
+              <h3>Corporate Law Services</h3>
+              <p>Advisory on corporate governance, compliance, and legal structuring.</p>
+            </div>
+            <div class="service-item">
+              <h3>Accounting & Bookkeeping</h3>
+              <p>Streamlined accounting and bookkeeping services to keep your finances in order.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container">
+        <p>© <span id="year"></span> Jayadeva & Co. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script>
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>
