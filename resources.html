@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Resources - Jayadeva & Co.</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="sticky-header">
+      <div class="container">
+        <div class="logo">
+          <h1>Jayadeva & Co.</h1>
+          <p>Chartered Accountants</p>
+        </div>
+        <nav>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="resources.html" class="active">Resources</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section id="resources">
+        <div class="container">
+          <h2>Resources & Demonstrations</h2>
+          <p>Explore our collection of case studies and sample documents to understand how we help our clients succeed.</p>
+          <div class="resources-grid">
+            <div class="resource-item">
+              <h3>Tax Compliance Case Study</h3>
+              <p>A detailed case study on how we helped a small business optimize its tax strategy.</p>
+              <a href="files/tax-compliance-case-study.pdf" class="resource-link" target="_blank">Download PDF</a>
+            </div>
+            <div class="resource-item">
+              <h3>Audit Report Sample</h3>
+              <p>A sample audit report showcasing our thorough and transparent approach.</p>
+              <a href="files/sample-audit-report.pdf" class="resource-link" target="_blank">Download PDF</a>
+            </div>
+            <div class="resource-item">
+              <h3>GST Consulting Guide</h3>
+              <p>A guide to navigating GST compliance for businesses in India.</p>
+              <a href="files/gst-consulting-guide.pdf" class="resource-link" target="_blank">Download PDF</a>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container">
+        <p>© <span id="year"></span> Jayadeva & Co. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script>
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+  </body>
+</html>
