@@ -1,140 +1,158 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
-
 body {
-    color: #333;
-    line-height: 1.6;
-    background: #fff;
-}
-
-header {
-    text-align: center;
-    padding: 20px;
-    border-bottom: 1px solid #ddd;
-}
-
-header h1 {
-    font-size: 1.8rem;
-    color: #333;
-}
-
-header h1:nth-child(2) {
-    font-size: 1.2rem;
-    font-weight: normal;
-    margin-top: 5px;
-}
-
-nav {
-    margin-top: 10px;
-}
-
-nav ul {
-    list-style: none;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  color: #000;
+  background-color: #fff;
+  line-height: 1.6;
 }
 
 .container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 40px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
-section {
-    text-align: center;
-    margin-bottom: 40px;
+.sticky-header {
+  position: sticky;
+  top: 0;
+  background-color: #000;
+  color: #fff;
+  padding: 10px 0;
+  z-index: 1000;
 }
 
-#home .services-header {
-    font-size: 1.3rem;
-    font-weight: bold;
-    margin: 20px 0 10px;
+.sticky-header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-#contact h2 {
-    font-size: 1.5rem;
-    margin-bottom: 15px;
+.logo h1 {
+  margin: 0;
+  font-size: 24px;
 }
 
-#home .services-list {
-    list-style: none;
-    list-style-type: none;
-    margin: 0 auto;
-    padding: 0;
-    display: table;
+.logo p {
+  margin: 0;
+  font-size: 14px;
 }
 
-#home .services-list li {
-    font-size: 1rem;
-    margin: 8px 0;
-    text-align: center;
-    list-style: none;
-    list-style-type: none;
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
 }
 
-#contact .contact-info {
-    font-size: 1.3rem;
-    font-weight: normal;
-    margin: 10px 0;
+nav ul li {
+  margin-left: 20px;
 }
 
-#contact .contact-info span {
-    color: #0056b3;
-    font-weight: 500;
+nav ul li a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+nav ul li a.active,
+nav ul li a:hover {
+  color: #ccc;
+}
+
+#hero {
+  background-color: #f5f5f5;
+  padding: 60px 0;
+  text-align: center;
+}
+
+#hero h2 {
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+#hero p {
+  font-size: 18px;
+  margin-bottom: 30px;
+}
+
+.cta-button {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #000;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+.cta-button:hover {
+  background-color: #333;
+}
+
+#overview, #services, #resources, #contact {
+  padding: 40px 0;
+}
+
+#overview h3, #services h2, #resources h2, #contact h2 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.overview-grid, .services-grid, .resources-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.overview-item, .service-item, .resource-item {
+  background-color: #f5f5f5;
+  padding: 20px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.resource-link {
+  display: inline-block;
+  margin-top: 10px;
+  color: #000;
+  text-decoration: underline;
+}
+
+.resource-link:hover {
+  color: #666;
+}
+
+.contact-info p {
+  font-size: 18px;
+  margin: 10px 0;
 }
 
 footer {
+  background-color: #000;
+  color: #fff;
+  text-align: center;
+  padding: 20px 0;
+}
+
+@media (max-width: 768px) {
+  .sticky-header .container {
+    flex-direction: column;
     text-align: center;
-    padding: 20px;
-    border-top: 1px solid #ddd;
-    font-size: 0.9rem;
-    color: #666;
-}
+  }
 
-footer .container {
-    padding: 0;
-    margin: 0 auto;
-    width: 100%;
-    max-width: 800px;
-}
+  nav ul {
+    flex-direction: column;
+    margin-top: 10px;
+  }
 
-/* Responsive Design */
-@media (max-width: 600px) {
-    header h1 {
-        font-size: 1.5rem;
-    }
-    header h1:nth-child(2) {
-        font-size: 1rem;
-    }
-    .container {
-        padding: 20px 10px;
-    }
-    #home .services-header {
-        font-size: 1.1rem;
-    }
-    #contact h2 {
-        font-size: 1.3rem;
-    }
-    #contact .contact-info {
-        font-size: 1.1rem;
-    }
-    #home .services-list {
-        list-style: none;
-        list-style-type: none;
-    }
-    #home .services-list li {
-        list-style: none;
-        list-style-type: none;
-    }
-    footer {
-        text-align: center;
-    }
-    footer .container {
-        padding: 0;
-        margin: 0 auto;
-        width: 100%;
-        max-width: 800px;
-    }
+  nav ul li {
+    margin: 10px 0;
+  }
+
+  #hero h2 {
+    font-size: 28px;
+  }
+
+  #hero p {
+    font-size: 16px;
+  }
 }
