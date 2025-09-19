@@ -156,8 +156,10 @@ nav ul li a:hover {
 }
 
 .service-details h3 {
-  font-size: 20px;
-  margin: 15px 0 10px;
+  font-size: 22px;
+  margin: 25px 0 15px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 5px;
 }
 
 .service-details p {
@@ -222,5 +224,10 @@ footer {
 
   .services-content {
     padding: 15px;
+  }
+
+  .service-details h3 {
+    font-size: 20px;
+    margin: 20px 0 10px;
   }
 }
