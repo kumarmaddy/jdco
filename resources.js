@@ -12,12 +12,14 @@ document.addEventListener("DOMContentLoaded", () => {
     marked.setOptions({
       renderer: new marked.Renderer(),
       breaks: true,
+      gfm: true,
     });
     const renderer = new marked.Renderer();
     renderer.link = (href, title, text) => {
       return `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
     };
     marked.use({ renderer });
+    console.log("marked.js loaded successfully");
   } else {
     console.error("marked.js not loaded");
   }
@@ -102,6 +104,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  // Check if content exceeds two-line preview (approx. 100 characters)
+  const needsExpandIcon = (contentText) => {
+    return contentText.length > 100; // Adjust threshold as needed
+  };
+
   // Render content for the active section
   const renderContent = (updates, knowledgeArticles, downloads) => {
     const updatesContent = document.getElementById("updates-content");
@@ -120,6 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
       div.dataset.id = `${item.section}-${item.title}`;
       const contentText =
         item.content || item.description || "No content available";
+      const showExpand = needsExpandIcon(contentText);
       div.innerHTML = `
         <div class="tags">${(item.tags || [])
           .map((tag) => `<span class="tag">${tag}</span>`)
@@ -142,18 +150,22 @@ document.addEventListener("DOMContentLoaded", () => {
             ? `<a href="${item.file}" class="download-link" target="_blank">Download</a>`
             : ""
         }
-        <button class="expand-button" title="Click to read more">Expand</button>
+        ${
+          showExpand
+            ? `<button class="expand-icon" title="Click to read more"><span class="material-icons">expand_more</span></button>`
+            : ""
+        }
       `;
       div.addEventListener("click", (e) => {
         if (
           !e.target.closest(".download-link") &&
-          !e.target.closest(".expand-button")
+          !e.target.closest(".expand-icon")
         ) {
-          showPopup(item);
+          if (showExpand) showPopup(item);
         }
       });
       div
-        .querySelector(".expand-button")
+        .querySelector(".expand-icon")
         ?.addEventListener("click", () => showPopup(item));
       container.appendChild(div);
     };
