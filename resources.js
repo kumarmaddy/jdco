@@ -8,15 +8,19 @@ document.addEventListener("DOMContentLoaded", () => {
   let allTags = [];
 
   // Configure marked.js to add target="_blank" to links
-  marked.setOptions({
-    renderer: new marked.Renderer(),
-    breaks: true,
-  });
-  const renderer = new marked.Renderer();
-  renderer.link = (href, title, text) => {
-    return `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
-  };
-  marked.use({ renderer });
+  if (typeof marked !== "undefined") {
+    marked.setOptions({
+      renderer: new marked.Renderer(),
+      breaks: true,
+    });
+    const renderer = new marked.Renderer();
+    renderer.link = (href, title, text) => {
+      return `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
+    };
+    marked.use({ renderer });
+  } else {
+    console.error("marked.js not loaded");
+  }
 
   // Load content from JSON files
   const loadContent = async () => {
@@ -72,16 +76,29 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       // Sort items by date (most recent first) for sections with dates
-      updates.sort((a, b) => new Date(b.date) - new Date(a.date));
-      knowledgeArticles.sort((a, b) => new Date(b.date) - new Date(a.date));
-      downloads.sort((a, b) => new Date(b.date) - new Date(a.date));
+      updates.sort(
+        (a, b) =>
+          new Date(b.date || "1970-01-01") - new Date(a.date || "1970-01-01")
+      );
+      knowledgeArticles.sort(
+        (a, b) =>
+          new Date(b.date || "1970-01-01") - new Date(a.date || "1970-01-01")
+      );
+      downloads.sort(
+        (a, b) =>
+          new Date(b.date || "1970-01-01") - new Date(a.date || "1970-01-01")
+      );
 
       // Initial render
       renderContent(updates, knowledgeArticles, downloads);
     } catch (error) {
       console.error("Error loading content:", error);
       document.getElementById("updates-content").innerHTML =
-        "<p>Error loading content. Please try again later.</p>";
+        "<p>Error loading content. Please check the console for details.</p>";
+      document.getElementById("knowledge-articles-content").innerHTML =
+        "<p>Error loading content. Please check the console for details.</p>";
+      document.getElementById("downloads-content").innerHTML =
+        "<p>Error loading content. Please check the console for details.</p>";
     }
   };
 
@@ -101,8 +118,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const div = document.createElement("div");
       div.classList.add("resource-item");
       div.dataset.id = `${item.section}-${item.title}`;
+      const contentText =
+        item.content || item.description || "No content available";
       div.innerHTML = `
-        <h4>${item.title}</h4>
+        <h4>${item.title || "Untitled"}</h4>
         ${
           item.date
             ? `<p class="timestamp">Posted on ${new Date(
@@ -117,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="tags">${(item.tags || [])
           .map((tag) => `<span class="tag">${tag}</span>`)
           .join("")}</div>
-        <p class="content-preview">${item.content || item.description || ""}</p>
+        <p class="content-preview">${contentText}</p>
         ${
           item.file
             ? `<a href="${item.file}" class="download-link" target="_blank">Download</a>`
@@ -126,8 +145,9 @@ document.addEventListener("DOMContentLoaded", () => {
         <span class="read-more">Click to read more</span>
       `;
       div.addEventListener("click", (e) => {
-        if (e.target.classList.contains("download-link")) return;
-        showPopup(item);
+        if (!e.target.closest(".download-link")) {
+          showPopup(item);
+        }
       });
       container.appendChild(div);
     };
@@ -142,13 +162,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Show popup with full content
   const showPopup = (item) => {
-    // Parse content with marked.js for links and split into paragraphs
-    const content = (item.content || item.description || "")
+    const contentText =
+      item.content || item.description || "No content available";
+    const paragraphs = contentText
       .split("\n\n")
-      .map((paragraph) => `<p>${marked.parse(paragraph)}</p>`)
+      .map((paragraph) => {
+        return `<p>${
+          typeof marked !== "undefined" ? marked.parse(paragraph) : paragraph
+        }</p>`;
+      })
       .join("");
     popupContent.innerHTML = `
-      <h4>${item.title}</h4>
+      <h4>${item.title || "Untitled"}</h4>
       ${
         item.date
           ? `<p class="timestamp">Posted on ${new Date(
@@ -163,7 +188,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="tags">${(item.tags || [])
         .map((tag) => `<span class="tag">${tag}</span>`)
         .join("")}</div>
-      <div class="content">${content}</div>
+      <div class="content">${paragraphs}</div>
       ${
         item.file
           ? `<a href="${item.file}" class="download-link" target="_blank">Download</a>`
@@ -189,9 +214,8 @@ document.addEventListener("DOMContentLoaded", () => {
       return items.filter((item) => {
         const matchesSearch =
           (item.title || "").toLowerCase().includes(searchInput) ||
-          (item.content && item.content.toLowerCase().includes(searchInput)) ||
-          (item.description &&
-            item.description.toLowerCase().includes(searchInput)) ||
+          (item.content || "").toLowerCase().includes(searchInput) ||
+          (item.description || "").toLowerCase().includes(searchInput) ||
           (item.tags || []).some((tag) =>
             tag.toLowerCase().includes(searchInput)
           );
@@ -202,14 +226,37 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     Promise.all([
-      fetch("data/updates.json").then((res) => res.json()),
-      fetch("data/knowledge-articles.json").then((res) => res.json()),
-      fetch("data/downloads.json").then((res) => res.json()),
+      fetch("data/updates.json").then((res) => {
+        if (!res.ok)
+          throw new Error(`Failed to fetch updates.json: ${res.status}`);
+        return res.json();
+      }),
+      fetch("data/knowledge-articles.json").then((res) => {
+        if (!res.ok)
+          throw new Error(
+            `Failed to fetch knowledge-articles.json: ${res.status}`
+          );
+        return res.json();
+      }),
+      fetch("data/downloads.json").then((res) => {
+        if (!res.ok)
+          throw new Error(`Failed to fetch downloads.json: ${res.status}`);
+        return res.json();
+      }),
     ])
       .then(([updates, knowledgeArticles, downloads]) => {
-        updates.sort((a, b) => new Date(b.date) - new Date(a.date));
-        knowledgeArticles.sort((a, b) => new Date(b.date) - new Date(a.date));
-        downloads.sort((a, b) => new Date(b.date) - new Date(a.date));
+        updates.sort(
+          (a, b) =>
+            new Date(b.date || "1970-01-01") - new Date(a.date || "1970-01-01")
+        );
+        knowledgeArticles.sort(
+          (a, b) =>
+            new Date(b.date || "1970-01-01") - new Date(a.date || "1970-01-01")
+        );
+        downloads.sort(
+          (a, b) =>
+            new Date(b.date || "1970-01-01") - new Date(a.date || "1970-01-01")
+        );
         renderContent(
           filterItems(updates),
           filterItems(knowledgeArticles),
@@ -219,7 +266,11 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch((error) => {
         console.error("Error filtering content:", error);
         document.getElementById("updates-content").innerHTML =
-          "<p>Error filtering content. Please try again later.</p>";
+          "<p>Error filtering content. Please check the console for details.</p>";
+        document.getElementById("knowledge-articles-content").innerHTML =
+          "<p>Error filtering content. Please check the console for details.</p>";
+        document.getElementById("downloads-content").innerHTML =
+          "<p>Error filtering content. Please check the console for details.</p>";
       });
   };
 
