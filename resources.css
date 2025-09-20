@@ -137,15 +137,15 @@
 .resource-item .tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
   margin-bottom: 10px;
 }
 
 .resource-item .tag {
   background-color: #f5f5f5;
-  padding: 5px 10px;
-  border-radius: 15px;
-  font-size: 14px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
 }
 
 .resource-item .content-preview {
@@ -171,13 +171,22 @@
   color: #666;
 }
 
-.resource-item .read-more {
+.resource-item .expand-button {
   position: absolute;
   bottom: 10px;
   right: 10px;
+  padding: 6px 12px;
   font-size: 14px;
-  color: #000;
-  text-decoration: underline;
+  background-color: #000;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.resource-item .expand-button:hover {
+  background-color: #333;
 }
 
 .popup {
@@ -248,15 +257,15 @@
 .popup-content .tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
   margin-bottom: 10px;
 }
 
 .popup-content .tag {
   background-color: #f5f5f5;
-  padding: 5px 10px;
-  border-radius: 15px;
-  font-size: 14px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
 }
 
 .popup-content .download-link {
