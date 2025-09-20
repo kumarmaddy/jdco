@@ -12,10 +12,12 @@ document.addEventListener("DOMContentLoaded", () => {
       ghCompatibleHeaderId: true,
       simpleLineBreaks: true,
       openLinksInNewWindow: true,
+      noHeaderId: false,
+      simplifiedAutoLink: true,
     });
     converter.setFlavor("github");
     console.log("showdown.js loaded successfully");
-    window.markdownConverter = converter; // Make converter globally accessible
+    window.markdownConverter = converter;
   } else {
     console.error("showdown.js not loaded");
   }
@@ -73,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
         tagSelect.appendChild(option);
       });
 
-      // Sort items by date (most recent first) for sections with dates
+      // Sort items by date (most recent first)
       updates.sort(
         (a, b) =>
           new Date(b.date || "1970-01-01") - new Date(a.date || "1970-01-01")
@@ -92,11 +94,11 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (error) {
       console.error("Error loading content:", error);
       document.getElementById("updates-content").innerHTML =
-        "<p>Error loading content. Please check the console for details.</p>";
+        "<p>Error loading content. Please try again later.</p>";
       document.getElementById("knowledge-articles-content").innerHTML =
-        "<p>Error loading content. Please check the console for details.</p>";
+        "<p>Error loading content. Please try again later.</p>";
       document.getElementById("downloads-content").innerHTML =
-        "<p>Error loading content. Please check the console for details.</p>";
+        "<p>Error loading content. Please try again later.</p>";
     }
   };
 
@@ -113,16 +115,19 @@ document.addEventListener("DOMContentLoaded", () => {
     downloadsContent.innerHTML = "";
 
     const renderItem = (item, container) => {
+      console.log("Rendering item:", item);
       const div = document.createElement("div");
       div.classList.add("resource-item");
       div.dataset.id = `${item.section}-${item.title}`;
       const contentText =
         item.content || item.description || "No content available";
+      const tagsHtml = (item.tags || [])
+        .map((tag) => `<span class="tag">${tag}</span>`)
+        .join("");
+      console.log("Tags HTML for item:", tagsHtml);
       div.innerHTML = `
         <div class="header-row">
-          <div class="tags">${(item.tags || [])
-            .map((tag) => `<span class="tag">${tag}</span>`)
-            .join("")}</div>
+          <div class="tags">${tagsHtml}</div>
           <button class="expand-icon" title="Click to read more"><span class="material-icons">open_in_full</span></button>
         </div>
         <h4>${item.title || "Untitled"}</h4>
@@ -181,11 +186,12 @@ document.addEventListener("DOMContentLoaded", () => {
       .map((paragraph) => `<p>${paragraph}</p>`)
       .join("");
     console.log("Final HTML:", paragraphs);
+    const tagsHtml = (item.tags || [])
+      .map((tag) => `<span class="tag">${tag}</span>`)
+      .join("");
     popupContent.innerHTML = `
       <div class="header-row">
-        <div class="tags">${(item.tags || [])
-          .map((tag) => `<span class="tag">${tag}</span>`)
-          .join("")}</div>
+        <div class="tags">${tagsHtml}</div>
         <button class="close-button" aria-label="Close popup">×</button>
       </div>
       <h4>${item.title || "Untitled"}</h4>
@@ -280,18 +286,17 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch((error) => {
         console.error("Error filtering content:", error);
         document.getElementById("updates-content").innerHTML =
-          "<p>Error filtering content. Please check the console for details.</p>";
+          "<p>Error filtering content. Please try again later.</p>";
         document.getElementById("knowledge-articles-content").innerHTML =
-          "<p>Error filtering content. Please check the console for details.</p>";
+          "<p>Error filtering content. Please try again later.</p>";
         document.getElementById("downloads-content").innerHTML =
-          "<p>Error filtering content. Please check the console for details.</p>";
+          "<p>Error filtering content. Please try again later.</p>";
       });
   };
 
   // Sidebar navigation
   tabs.forEach((tab) => {
-    tab.addEventListener("click", (e) => {
-      e.preventDefault();
+    tab.addEventListener("click", () => {
       tabs.forEach((t) => t.classList.remove("active"));
       contents.forEach((t) => t.classList.remove("active"));
 
@@ -301,6 +306,14 @@ document.addEventListener("DOMContentLoaded", () => {
       filterContent();
     });
   });
+
+  // Event listeners for filter inputs
+  document
+    .getElementById("search-input")
+    .addEventListener("input", filterContent);
+  document
+    .getElementById("tag-select")
+    .addEventListener("change", filterContent);
 
   loadContent();
 });
