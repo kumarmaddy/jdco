@@ -6,9 +6,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeButton = document.querySelector(".close-button");
   let allItems = [];
   let allTags = [];
-
-  // Initialize liked items from localStorage
-  const likedItems = JSON.parse(localStorage.getItem("likedItems")) || {};
+  let bookmarkedItems =
+    JSON.parse(localStorage.getItem("bookmarkedItems")) || {};
 
   // Load content from JSON files
   const loadContent = async () => {
@@ -91,27 +90,28 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="tags">${item.tags
           .map((tag) => `<span class="tag">${tag}</span>`)
           .join("")}</div>
-        <p>${item.content || item.description}</p>
+        <p class="content-preview">${item.content || item.description}</p>
         ${
           item.file
             ? `<a href="${item.file}" class="download-link" target="_blank">Download</a>`
             : ""
         }
-        <button class="like-button ${
-          likedItems[`${item.section}-${item.title}`] ? "liked" : ""
-        }" aria-label="Like this item">👍</button>
+        <button class="bookmark-button ${
+          bookmarkedItems[`${item.section}-${item.title}`] ? "bookmarked" : ""
+        }" aria-label="Bookmark this item">📑</button>
+        <span class="read-more">Click to read more</span>
       `;
       div.addEventListener("click", (e) => {
         if (
-          e.target.classList.contains("like-button") ||
+          e.target.classList.contains("bookmark-button") ||
           e.target.classList.contains("download-link")
         )
           return;
         showPopup(item);
       });
       div
-        .querySelector(".like-button")
-        .addEventListener("click", () => toggleLike(item));
+        .querySelector(".bookmark-button")
+        .addEventListener("click", () => toggleBookmark(item));
       container.appendChild(div);
     };
 
@@ -144,21 +144,21 @@ document.addEventListener("DOMContentLoaded", () => {
           ? `<a href="${item.file}" class="download-link" target="_blank">Download</a>`
           : ""
       }
-      <button class="like-button ${
-        likedItems[`${item.section}-${item.title}`] ? "liked" : ""
-      }" aria-label="Like this item">👍</button>
+      <button class="bookmark-button ${
+        bookmarkedItems[`${item.section}-${item.title}`] ? "bookmarked" : ""
+      }" aria-label="Bookmark this item">📑</button>
     `;
     popupContent
-      .querySelector(".like-button")
-      .addEventListener("click", () => toggleLike(item));
+      .querySelector(".bookmark-button")
+      .addEventListener("click", () => toggleBookmark(item));
     popup.classList.add("active");
   };
 
-  // Toggle like state
-  const toggleLike = (item) => {
+  // Toggle bookmark state
+  const toggleBookmark = (item) => {
     const id = `${item.section}-${item.title}`;
-    likedItems[id] = !likedItems[id];
-    localStorage.setItem("likedItems", JSON.stringify(likedItems));
+    bookmarkedItems[id] = !bookmarkedItems[id];
+    localStorage.setItem("bookmarkedItems", JSON.stringify(bookmarkedItems));
     renderContent(
       allItems.filter((i) => i.section === "updates"),
       allItems.filter((i) => i.section === "knowledge-articles"),
