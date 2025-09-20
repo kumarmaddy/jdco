@@ -6,8 +6,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeButton = document.querySelector(".close-button");
   let allItems = [];
   let allTags = [];
-  let bookmarkedItems =
-    JSON.parse(localStorage.getItem("bookmarkedItems")) || {};
+
+  // Configure marked.js to add target="_blank" to links
+  marked.setOptions({
+    renderer: new marked.Renderer(),
+    breaks: true,
+  });
+  const renderer = new marked.Renderer();
+  renderer.link = (href, title, text) => {
+    return `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
+  };
+  marked.use({ renderer });
 
   // Load content from JSON files
   const loadContent = async () => {
@@ -96,22 +105,12 @@ document.addEventListener("DOMContentLoaded", () => {
             ? `<a href="${item.file}" class="download-link" target="_blank">Download</a>`
             : ""
         }
-        <button class="bookmark-button ${
-          bookmarkedItems[`${item.section}-${item.title}`] ? "bookmarked" : ""
-        }" aria-label="Bookmark this item">📑</button>
         <span class="read-more">Click to read more</span>
       `;
       div.addEventListener("click", (e) => {
-        if (
-          e.target.classList.contains("bookmark-button") ||
-          e.target.classList.contains("download-link")
-        )
-          return;
+        if (e.target.classList.contains("download-link")) return;
         showPopup(item);
       });
-      div
-        .querySelector(".bookmark-button")
-        .addEventListener("click", () => toggleBookmark(item));
       container.appendChild(div);
     };
 
@@ -122,6 +121,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Show popup with full content
   const showPopup = (item) => {
+    // Parse content with marked.js for links and split into paragraphs
+    const content = (item.content || item.description)
+      .split("\n\n")
+      .map((paragraph) => `<p>${marked.parse(paragraph)}</p>`)
+      .join("");
     popupContent.innerHTML = `
       <h4>${item.title}</h4>
       ${
@@ -138,35 +142,14 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="tags">${item.tags
         .map((tag) => `<span class="tag">${tag}</span>`)
         .join("")}</div>
-      <p>${item.content || item.description}</p>
+      <div class="content">${content}</div>
       ${
         item.file
           ? `<a href="${item.file}" class="download-link" target="_blank">Download</a>`
           : ""
       }
-      <button class="bookmark-button ${
-        bookmarkedItems[`${item.section}-${item.title}`] ? "bookmarked" : ""
-      }" aria-label="Bookmark this item">📑</button>
     `;
-    popupContent
-      .querySelector(".bookmark-button")
-      .addEventListener("click", () => toggleBookmark(item));
     popup.classList.add("active");
-  };
-
-  // Toggle bookmark state
-  const toggleBookmark = (item) => {
-    const id = `${item.section}-${item.title}`;
-    bookmarkedItems[id] = !bookmarkedItems[id];
-    localStorage.setItem("bookmarkedItems", JSON.stringify(bookmarkedItems));
-    renderContent(
-      allItems.filter((i) => i.section === "updates"),
-      allItems.filter((i) => i.section === "knowledge-articles"),
-      allItems.filter((i) => i.section === "downloads")
-    );
-    if (popup.classList.contains("active")) {
-      showPopup(item);
-    }
   };
 
   // Close popup
