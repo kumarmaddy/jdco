@@ -158,11 +158,21 @@
 .resource-item .content-preview {
   font-size: 16px;
   margin-bottom: 20px;
+  min-height: 2em;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.resource-item .content-preview a {
+  color: #1a73e8;
+  text-decoration: underline;
+}
+
+.resource-item .content-preview a:hover {
+  color: #134c9e;
 }
 
 .resource-item .download-link {
@@ -228,13 +238,12 @@
 }
 
 .popup-content .content a {
-  color: #000;
+  color: #1a73e8;
   text-decoration: underline;
-  transition: color 0.3s ease;
 }
 
 .popup-content .content a:hover {
-  color: #666;
+  color: #134c9e;
 }
 
 .popup-content .close-button {
@@ -330,8 +339,8 @@
   }
 
   .popup-content {
-    width: 95%;
-    margin: 0;
+    width: 90%;
+    margin: 0 5%;
     max-height: 90vh;
   }
 

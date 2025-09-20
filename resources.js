@@ -130,6 +130,11 @@ document.addEventListener("DOMContentLoaded", () => {
       div.dataset.id = `${item.section}-${item.title}`;
       const contentText =
         item.content || item.description || "No content available";
+      const previewText =
+        typeof showdown !== "undefined"
+          ? window.markdownConverter.makeHtml(contentText)
+          : contentText;
+      console.log("Preview content:", previewText);
       const tagsHtml = (item.tags || [])
         .map((tag) => `<span class="tag">${tag}</span>`)
         .join("");
@@ -152,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
               })}</p>`
             : ""
         }
-        <p class="content-preview">${contentText}</p>
+        <p class="content-preview">${previewText}</p>
         ${
           item.file
             ? `<a href="${item.file}" class="download-link" target="_blank">Download</a>`
