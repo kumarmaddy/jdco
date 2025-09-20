@@ -1,36 +1,9 @@
 [
   {
     "title": "E-Invoicing Mandates for 2026",
-    "date": "2025-10-05",
+    "date": "2025-09-20",
     "content": "The GST Council has announced mandatory e-invoicing for all B2B transactions starting April 2026, aimed at enhancing transparency and reducing tax evasion. This applies to businesses with an annual turnover above ₹5 crore.\n\nE-invoicing requires generating invoices through the GST portal, which assigns a unique Invoice Reference Number (IRN). This streamlines input tax credit reconciliation and reduces manual errors. For detailed guidelines, visit [GST Portal](https://www.gst.gov.in).\n\nBusinesses must upgrade their accounting systems to integrate with the GST Network API. Small businesses may face challenges in compliance due to technology costs. Our team at Jayadeva & Co. offers comprehensive support for system integration.\n\nWe recommend starting the transition early to avoid penalties. Contact us to assess your readiness and implement e-invoicing solutions.\n\nThis mandate also aligns with global digital tax trends, positioning India as a leader in tax automation.",
-    "tags": [
-      "GST",
-      "E-Invoicing",
-      "Compliance",
-      "Tax Policy",
-      "Audit Standards"
-    ],
-    "pinned": true
-  },
-  {
-    "title": "Understanding GST for Small Businesses",
-    "date": "2025-09-01",
-    "content": "Details about GST compliance.\n\nSee [GST Council website](https://www.gst.gov.in).",
-    "tags": ["GST", "Tax"],
-    "pinned": true
-  },
-  {
-    "title": "Tax Filing Deadlines 2025",
-    "date": "2025-08-15",
-    "content": "Key deadlines for tax filing in 2025.",
-    "tags": ["Tax", "Compliance"],
+    "tags": ["GST", "Compliance"],
     "pinned": false
-  },
-  {
-    "title": "New GST Rate Changes",
-    "date": "2025-07-01",
-    "content": "Overview of recent GST rate updates.",
-    "tags": ["GST", "Update"],
-    "pinned": true
   }
 ]
