@@ -104,11 +104,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // Check if content exceeds two-line preview (approx. 100 characters)
-  const needsExpandIcon = (contentText) => {
-    return contentText.length > 100; // Adjust threshold as needed
-  };
-
   // Render content for the active section
   const renderContent = (updates, knowledgeArticles, downloads) => {
     const updatesContent = document.getElementById("updates-content");
@@ -127,11 +122,11 @@ document.addEventListener("DOMContentLoaded", () => {
       div.dataset.id = `${item.section}-${item.title}`;
       const contentText =
         item.content || item.description || "No content available";
-      const showExpand = needsExpandIcon(contentText);
       div.innerHTML = `
         <div class="tags">${(item.tags || [])
           .map((tag) => `<span class="tag">${tag}</span>`)
           .join("")}</div>
+        <button class="expand-icon" title="Click to read more"><span class="material-icons">open_in_full</span></button>
         <h4>${item.title || "Untitled"}</h4>
         ${
           item.date
@@ -150,18 +145,13 @@ document.addEventListener("DOMContentLoaded", () => {
             ? `<a href="${item.file}" class="download-link" target="_blank">Download</a>`
             : ""
         }
-        ${
-          showExpand
-            ? `<button class="expand-icon" title="Click to read more"><span class="material-icons">expand_more</span></button>`
-            : ""
-        }
       `;
       div.addEventListener("click", (e) => {
         if (
           !e.target.closest(".download-link") &&
           !e.target.closest(".expand-icon")
         ) {
-          if (showExpand) showPopup(item);
+          showPopup(item);
         }
       });
       div
@@ -182,12 +172,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const showPopup = (item) => {
     const contentText =
       item.content || item.description || "No content available";
+    console.log("Raw content:", contentText);
     const parsedContent =
-      typeof marked !== "undefined" ? marked.parse(contentText) : contentText;
+      typeof marked !== "undefined"
+        ? marked.parse(contentText, { async: false })
+        : contentText;
+    console.log("Parsed content:", parsedContent);
     const paragraphs = parsedContent
       .split("\n\n")
       .map((paragraph) => `<p>${paragraph}</p>`)
       .join("");
+    console.log("Final HTML:", paragraphs);
     popupContent.innerHTML = `
       <div class="tags">${(item.tags || [])
         .map((tag) => `<span class="tag">${tag}</span>`)
