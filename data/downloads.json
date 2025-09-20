@@ -4,20 +4,23 @@
     "date": "2025-05-20",
     "description": "A case study on tax compliance for MSMEs.\n\nDownload the full report for insights.",
     "file": "files/test-file.pdf",
-    "tags": ["Tax Compliance", "MSME", "Case Study"]
+    "tags": ["Tax Compliance", "MSME", "Case Study"],
+    "pinned": true
   },
   {
     "title": "Sample Audit Report",
     "date": "2025-04-10",
     "description": "A sample audit report for financial auditing.\n\nDownload to understand audit structures.",
     "file": "files/test-file.pdf",
-    "tags": ["Audit", "Financial Reporting"]
+    "tags": ["Audit", "Financial Reporting"],
+    "pinned": true
   },
   {
     "title": "GST Consulting Guide",
     "date": "2025-03-15",
     "description": "A comprehensive guide to GST consulting.\n\nDownload for practical tips.",
     "file": "files/test-file.pdf",
-    "tags": ["GST", "Consulting"]
+    "tags": ["GST", "Consulting"],
+    "pinned": false
   }
 ]

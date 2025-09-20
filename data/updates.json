@@ -9,42 +9,28 @@
       "Compliance",
       "Tax Policy",
       "Audit Standards"
-    ]
+    ],
+    "pinned": true
   },
   {
-    "title": "Navigating New Audit Requirements for 2025",
-    "date": "2025-10-01",
-    "content": "The Indian government has introduced new audit requirements for 2025, aimed at enhancing transparency and accountability in financial reporting. These requirements mandate stricter internal controls, enhanced disclosures for related-party transactions, and mandatory rotation of auditors for listed companies every five years.\n\nKey changes include the adoption of a digital audit trail for all transactions exceeding ₹50 lakh, requiring businesses to maintain detailed logs of financial activities. This aims to curb financial discrepancies and improve audit quality. Additionally, the threshold for statutory audits has been raised for small businesses, reducing compliance burdens for MSMEs.\n\nFor large corporations, the new requirements emphasize cybersecurity audits to protect sensitive financial data. Companies must implement robust IT systems to comply with these standards, which may involve significant upfront costs. Our team at Jayadeva & Co. specializes in guiding businesses through these changes, offering tailored audit solutions to ensure compliance.\n\nWe recommend businesses conduct a pre-audit assessment to identify gaps in their current systems and processes. Early preparation can mitigate risks of non-compliance and optimize audit outcomes. Contact us to learn how we can assist in navigating these new requirements effectively.\n\nFurthermore, the introduction of sustainability audits as an optional component encourages businesses to report on environmental and social governance (ESG) factors, aligning with global trends. This is particularly relevant for companies seeking international investment.",
-    "tags": [
-      "Audit",
-      "Compliance",
-      "Financial Reporting",
-      "MSME",
-      "Cybersecurity"
-    ]
+    "title": "Understanding GST for Small Businesses",
+    "date": "2025-09-01",
+    "content": "Details about GST compliance.\n\nSee [GST Council website](https://www.gst.gov.in).",
+    "tags": ["GST", "Tax"],
+    "pinned": true
   },
   {
-    "title": "Digital Transformation in Tax Compliance",
-    "date": "2025-09-30",
-    "content": "The adoption of digital tools in tax compliance is transforming how businesses manage their obligations. The Income Tax Department and GST Council have rolled out advanced e-filing platforms, enabling seamless submission of returns and real-time tracking of compliance status. These platforms integrate with accounting software, reducing manual errors and improving efficiency.\n\nKey features include automated input tax credit reconciliation, AI-based audit triggers, and dashboards for compliance monitoring. Businesses can now access real-time data analytics to optimize tax strategies and identify potential risks early. For instance, the new e-invoicing system under GST mandates digital verification of invoices, ensuring transparency and reducing fraud.\n\nHowever, transitioning to these platforms requires significant investment in technology and training. Small businesses may face challenges in upgrading their systems to comply with these digital mandates. Our team at Jayadeva & Co. offers end-to-end support, from system integration to staff training, to ensure a smooth transition.\n\nWe recommend businesses start by assessing their current accounting software for compatibility with the new platforms. Additionally, adopting cloud-based solutions can enhance data security and accessibility. Contact us to learn how we can help your business navigate this digital transformation effectively.\n\nThis shift also opens opportunities for leveraging data analytics in tax planning, enabling businesses to forecast tax liabilities with greater accuracy. Stay ahead of the curve by embracing these digital tools today.",
-    "tags": ["Tax Compliance", "Digital Transformation", "GST", "Income Tax"]
-  },
-  {
-    "title": "Comprehensive Guide to Corporate Tax Reforms 2025",
-    "date": "2025-09-25",
-    "content": "The Indian government has introduced sweeping corporate tax reforms for 2025, aimed at boosting economic growth and easing compliance for businesses. These reforms include a reduction in the corporate tax rate for domestic companies to 22% for existing businesses and 15% for new manufacturing units, subject to certain conditions. Additionally, the Minimum Alternate Tax (MAT) has been phased out for companies opting for the new tax regime, significantly reducing the tax burden.\n\nKey highlights of the reforms include enhanced deductions for research and development, streamlined tax filing processes, and incentives for startups and MSMEs. Businesses can now leverage a simplified compliance framework, with automated assessments and reduced scrutiny for compliant taxpayers.\n\nHowever, these changes come with new reporting requirements, such as mandatory e-invoicing for B2B transactions and enhanced disclosures for transfer pricing. Companies must update their accounting systems to align with these requirements by April 2026. Our team at Jayadeva & Co. is equipped to guide businesses through this transition, offering tailored solutions to optimize tax benefits and ensure compliance.\n\nFor startups, the reforms introduce a 3-year tax holiday extension for eligible entities, provided they meet innovation and employment criteria. MSMEs benefit from relaxed audit thresholds and access to subsidized credit facilities. These measures aim to foster entrepreneurship and support small businesses in scaling operations.\n\nWe recommend businesses review their tax strategies promptly to capitalize on these opportunities. Contact us for a detailed consultation on how these reforms impact your organization and how to navigate the new compliance landscape effectively.",
-    "tags": ["Corporate Tax", "Tax Reforms", "Compliance", "Startups", "MSME"]
-  },
-  {
-    "title": "New GST Compliance Guidelines for 2025",
-    "date": "2025-09-20",
-    "content": "The GST Council has introduced new guidelines for 2025 compliance, focusing on e-invoicing and input tax credit reconciliation.",
-    "tags": ["GST", "Compliance", "Tax"]
-  },
-  {
-    "title": "Income Tax Deadline Extended",
+    "title": "Tax Filing Deadlines 2025",
     "date": "2025-08-15",
-    "content": "The Income Tax Department has extended the filing deadline for FY 2024-25 to December 31, 2025, for small businesses.",
-    "tags": ["Income Tax", "Compliance"]
+    "content": "Key deadlines for tax filing in 2025.",
+    "tags": ["Tax", "Compliance"],
+    "pinned": false
+  },
+  {
+    "title": "New GST Rate Changes",
+    "date": "2025-07-01",
+    "content": "Overview of recent GST rate updates.",
+    "tags": ["GST", "Update"],
+    "pinned": true
   }
 ]

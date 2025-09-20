@@ -3,12 +3,21 @@
     "title": "Understanding GST for Small Businesses",
     "date": "2025-07-10",
     "content": "GST can be complex for small businesses. This guide explains key concepts and compliance requirements.\n\nFor more information, check the [GST Council website](https://www.gst.gov.in).",
-    "tags": ["GST", "Small Business", "Compliance"]
+    "tags": ["GST", "Small Business", "Compliance"],
+    "pinned": true
   },
   {
     "title": "Tax Planning Strategies for Startups",
     "date": "2025-06-15",
     "content": "Startups face unique tax challenges. This article covers effective tax planning strategies.\n\nLearn more at [Startup India](https://www.startupindia.gov.in).",
-    "tags": ["Startups", "Tax Planning", "Compliance"]
+    "tags": ["Startups", "Tax Planning", "Compliance"],
+    "pinned": false
+  },
+  {
+    "title": "Guide to Corporate Tax",
+    "date": "2025-06-01",
+    "content": "In-depth guide to corporate tax obligations.",
+    "tags": ["Corporate Tax", "Guide"],
+    "pinned": false
   }
 ]

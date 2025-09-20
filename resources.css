@@ -139,6 +139,7 @@
   flex-wrap: wrap;
   gap: 6px;
   margin-bottom: 10px;
+  align-items: center;
 }
 
 .resource-item .tag {
@@ -146,6 +147,12 @@
   padding: 4px 8px;
   border-radius: 12px;
   font-size: 12px;
+}
+
+.resource-item .pinned-icon {
+  font-size: 18px;
+  color: #666;
+  margin-left: 6px;
 }
 
 .resource-item .content-preview {
@@ -259,6 +266,7 @@
   flex-wrap: wrap;
   gap: 6px;
   margin-bottom: 10px;
+  align-items: center;
 }
 
 .popup-content .tag {
@@ -266,6 +274,12 @@
   padding: 4px 8px;
   border-radius: 12px;
   font-size: 12px;
+}
+
+.popup-content .pinned-icon {
+  font-size: 18px;
+  color: #666;
+  margin-left: 6px;
 }
 
 .popup-content .download-link {
@@ -316,8 +330,8 @@
   }
 
   .popup-content {
-    width: 80%;
-    margin: 0 10%;
+    width: 95%;
+    margin: 0;
     max-height: 90vh;
   }
 

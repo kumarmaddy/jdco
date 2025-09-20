@@ -75,22 +75,31 @@ document.addEventListener("DOMContentLoaded", () => {
         tagSelect.appendChild(option);
       });
 
-      // Sort items by date (most recent first)
-      updates.sort(
-        (a, b) =>
-          new Date(b.date || "1970-01-01") - new Date(a.date || "1970-01-01")
-      );
-      knowledgeArticles.sort(
-        (a, b) =>
-          new Date(b.date || "1970-01-01") - new Date(a.date || "1970-01-01")
-      );
-      downloads.sort(
-        (a, b) =>
-          new Date(b.date || "1970-01-01") - new Date(a.date || "1970-01-01")
-      );
+      // Sort items: pinned articles first (by date, most recent first), then non-pinned (by date, most recent first)
+      const sortItems = (items) => {
+        const pinned = items
+          .filter((item) => item.pinned === true)
+          .sort(
+            (a, b) =>
+              new Date(b.date || "1970-01-01") -
+              new Date(a.date || "1970-01-01")
+          );
+        const nonPinned = items
+          .filter((item) => !item.pinned)
+          .sort(
+            (a, b) =>
+              new Date(b.date || "1970-01-01") -
+              new Date(a.date || "1970-01-01")
+          );
+        return [...pinned, ...nonPinned];
+      };
 
       // Initial render
-      renderContent(updates, knowledgeArticles, downloads);
+      renderContent(
+        sortItems(updates),
+        sortItems(knowledgeArticles),
+        sortItems(downloads)
+      );
     } catch (error) {
       console.error("Error loading content:", error);
       document.getElementById("updates-content").innerHTML =
@@ -124,12 +133,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const tagsHtml = (item.tags || [])
         .map((tag) => `<span class="tag">${tag}</span>`)
         .join("");
-      console.log("Tags HTML for item:", tagsHtml);
+      const pinnedIcon = item.pinned
+        ? '<span class="material-icons pinned-icon">push_pin</span>'
+        : "";
+      console.log("Tags HTML for item:", tagsHtml, "Pinned:", item.pinned);
       div.innerHTML = `
-        <div class="header-row">
-          <div class="tags">${tagsHtml}</div>
-          <button class="expand-icon" title="Click to read more"><span class="material-icons">open_in_full</span></button>
-        </div>
+        <div class="tags">${tagsHtml}${pinnedIcon}</div>
+        <button class="expand-icon" title="Click to read more"><span class="material-icons">open_in_full</span></button>
         <h4>${item.title || "Untitled"}</h4>
         ${
           item.date
@@ -189,11 +199,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const tagsHtml = (item.tags || [])
       .map((tag) => `<span class="tag">${tag}</span>`)
       .join("");
+    const pinnedIcon = item.pinned
+      ? '<span class="material-icons pinned-icon">push_pin</span>'
+      : "";
     popupContent.innerHTML = `
-      <div class="header-row">
-        <div class="tags">${tagsHtml}</div>
-        <button class="close-button" aria-label="Close popup">×</button>
-      </div>
+      <div class="tags">${tagsHtml}${pinnedIcon}</div>
+      <button class="close-button" aria-label="Close popup">×</button>
       <h4>${item.title || "Untitled"}</h4>
       ${
         item.date
@@ -265,22 +276,28 @@ document.addEventListener("DOMContentLoaded", () => {
       }),
     ])
       .then(([updates, knowledgeArticles, downloads]) => {
-        updates.sort(
-          (a, b) =>
-            new Date(b.date || "1970-01-01") - new Date(a.date || "1970-01-01")
-        );
-        knowledgeArticles.sort(
-          (a, b) =>
-            new Date(b.date || "1970-01-01") - new Date(a.date || "1970-01-01")
-        );
-        downloads.sort(
-          (a, b) =>
-            new Date(b.date || "1970-01-01") - new Date(a.date || "1970-01-01")
-        );
+        // Sort items: pinned articles first (by date), then non-pinned (by date)
+        const sortItems = (items) => {
+          const pinned = items
+            .filter((item) => item.pinned === true)
+            .sort(
+              (a, b) =>
+                new Date(b.date || "1970-01-01") -
+                new Date(a.date || "1970-01-01")
+            );
+          const nonPinned = items
+            .filter((item) => !item.pinned)
+            .sort(
+              (a, b) =>
+                new Date(b.date || "1970-01-01") -
+                new Date(a.date || "1970-01-01")
+            );
+          return [...pinned, ...nonPinned];
+        };
         renderContent(
-          filterItems(updates),
-          filterItems(knowledgeArticles),
-          filterItems(downloads)
+          sortItems(filterItems(updates)),
+          sortItems(filterItems(knowledgeArticles)),
+          sortItems(filterItems(downloads))
         );
       })
       .catch((error) => {
