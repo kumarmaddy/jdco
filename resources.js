@@ -1,8 +1,14 @@
 document.addEventListener("DOMContentLoaded", () => {
   const tabs = document.querySelectorAll(".resource-tab");
   const contents = document.querySelectorAll(".resource-details");
+  const popup = document.getElementById("resource-popup");
+  const popupContent = document.getElementById("popup-content");
+  const closeButton = document.querySelector(".close-button");
   let allItems = [];
   let allTags = [];
+
+  // Initialize liked items from localStorage
+  const likedItems = JSON.parse(localStorage.getItem("likedItems")) || {};
 
   // Load content from JSON files
   const loadContent = async () => {
@@ -38,7 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Sort items by date (most recent first) for sections with dates
       updates.sort((a, b) => new Date(b.date) - new Date(a.date));
       knowledgeArticles.sort((a, b) => new Date(b.date) - new Date(a.date));
-      // Downloads may not have dates; use JSON order if no date
+      downloads.sort((a, b) => new Date(b.date) - new Date(a.date));
 
       // Initial render
       renderContent(updates, knowledgeArticles, downloads);
@@ -65,43 +71,10 @@ document.addEventListener("DOMContentLoaded", () => {
     knowledgeContent.innerHTML = "";
     downloadsContent.innerHTML = "";
 
-    updates.forEach((item) => {
+    const renderItem = (item, container) => {
       const div = document.createElement("div");
       div.classList.add("resource-item");
-      div.innerHTML = `
-        <h4>${item.title}</h4>
-        <p class="timestamp">Posted on ${new Date(item.date).toLocaleDateString(
-          "en-US",
-          { year: "numeric", month: "long", day: "numeric" }
-        )}</p>
-        <div class="tags">${item.tags
-          .map((tag) => `<span class="tag">${tag}</span>`)
-          .join("")}</div>
-        <p>${item.content}</p>
-      `;
-      updatesContent.appendChild(div);
-    });
-
-    knowledgeArticles.forEach((item) => {
-      const div = document.createElement("div");
-      div.classList.add("resource-item");
-      div.innerHTML = `
-        <h4>${item.title}</h4>
-        <p class="timestamp">Posted on ${new Date(item.date).toLocaleDateString(
-          "en-US",
-          { year: "numeric", month: "long", day: "numeric" }
-        )}</p>
-        <div class="tags">${item.tags
-          .map((tag) => `<span class="tag">${tag}</span>`)
-          .join("")}</div>
-        <p>${item.content}</p>
-      `;
-      knowledgeContent.appendChild(div);
-    });
-
-    downloads.forEach((item) => {
-      const div = document.createElement("div");
-      div.classList.add("resource-item");
+      div.dataset.id = `${item.section}-${item.title}`;
       div.innerHTML = `
         <h4>${item.title}</h4>
         ${
@@ -118,14 +91,88 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="tags">${item.tags
           .map((tag) => `<span class="tag">${tag}</span>`)
           .join("")}</div>
-        <p>${item.description}</p>
-        <a href="${
+        <p>${item.content || item.description}</p>
+        ${
           item.file
-        }" class="download-link" target="_blank">Download</a>
+            ? `<a href="${item.file}" class="download-link" target="_blank">Download</a>`
+            : ""
+        }
+        <button class="like-button ${
+          likedItems[`${item.section}-${item.title}`] ? "liked" : ""
+        }" aria-label="Like this item">👍</button>
       `;
-      downloadsContent.appendChild(div);
-    });
+      div.addEventListener("click", (e) => {
+        if (
+          e.target.classList.contains("like-button") ||
+          e.target.classList.contains("download-link")
+        )
+          return;
+        showPopup(item);
+      });
+      div
+        .querySelector(".like-button")
+        .addEventListener("click", () => toggleLike(item));
+      container.appendChild(div);
+    };
+
+    updates.forEach((item) => renderItem(item, updatesContent));
+    knowledgeArticles.forEach((item) => renderItem(item, knowledgeContent));
+    downloads.forEach((item) => renderItem(item, downloadsContent));
   };
+
+  // Show popup with full content
+  const showPopup = (item) => {
+    popupContent.innerHTML = `
+      <h4>${item.title}</h4>
+      ${
+        item.date
+          ? `<p class="timestamp">Posted on ${new Date(
+              item.date
+            ).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}</p>`
+          : ""
+      }
+      <div class="tags">${item.tags
+        .map((tag) => `<span class="tag">${tag}</span>`)
+        .join("")}</div>
+      <p>${item.content || item.description}</p>
+      ${
+        item.file
+          ? `<a href="${item.file}" class="download-link" target="_blank">Download</a>`
+          : ""
+      }
+      <button class="like-button ${
+        likedItems[`${item.section}-${item.title}`] ? "liked" : ""
+      }" aria-label="Like this item">👍</button>
+    `;
+    popupContent
+      .querySelector(".like-button")
+      .addEventListener("click", () => toggleLike(item));
+    popup.classList.add("active");
+  };
+
+  // Toggle like state
+  const toggleLike = (item) => {
+    const id = `${item.section}-${item.title}`;
+    likedItems[id] = !likedItems[id];
+    localStorage.setItem("likedItems", JSON.stringify(likedItems));
+    renderContent(
+      allItems.filter((i) => i.section === "updates"),
+      allItems.filter((i) => i.section === "knowledge-articles"),
+      allItems.filter((i) => i.section === "downloads")
+    );
+    if (popup.classList.contains("active")) {
+      showPopup(item);
+    }
+  };
+
+  // Close popup
+  closeButton.addEventListener("click", () => {
+    popup.classList.remove("active");
+  });
 
   // Filter content by search and tag
   const filterContent = () => {
@@ -154,6 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ]).then(([updates, knowledgeArticles, downloads]) => {
       updates.sort((a, b) => new Date(b.date) - new Date(a.date));
       knowledgeArticles.sort((a, b) => new Date(b.date) - new Date(a.date));
+      downloads.sort((a, b) => new Date(b.date) - new Date(a.date));
       renderContent(
         filterItems(updates),
         filterItems(knowledgeArticles),
@@ -171,7 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
       tab.classList.add("active");
       const tabId = tab.getAttribute("data-tab");
       document.getElementById(tabId).classList.add("active");
-      filterContent(); // Re-apply filters for the new section
+      filterContent();
     });
   });
 
