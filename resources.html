@@ -14,7 +14,7 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/icon?family=Material+Icons"
     />
-    <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/lib/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/showdown@2.1.0/dist/showdown.min.js"></script>
   </head>
   <body>
     <header class="sticky-header">
@@ -60,19 +60,25 @@
             <div class="resources-sidebar">
               <ul class="resources-menu">
                 <li>
-                  <button class="resource-tab active" data-tab="updates">
-                    Updates
-                  </button>
+                  <a
+                    href="#updates"
+                    class="resource-tab active"
+                    data-tab="updates"
+                    >Updates</a
+                  >
                 </li>
                 <li>
-                  <button class="resource-tab" data-tab="knowledge-articles">
-                    Knowledge Articles
-                  </button>
+                  <a
+                    href="#knowledge-articles"
+                    class="resource-tab"
+                    data-tab="knowledge-articles"
+                    >Knowledge Articles</a
+                  >
                 </li>
                 <li>
-                  <button class="resource-tab" data-tab="downloads">
-                    Downloads
-                  </button>
+                  <a href="#downloads" class="resource-tab" data-tab="downloads"
+                    >Downloads</a
+                  >
                 </li>
               </ul>
             </div>
@@ -101,7 +107,6 @@
           </div>
           <div class="popup" id="resource-popup">
             <div class="popup-content">
-              <button class="close-button" aria-label="Close popup">×</button>
               <div id="popup-content"></div>
             </div>
           </div>
