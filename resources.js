@@ -1,114 +1,159 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
+  const tabs = document.querySelectorAll(".resource-tab");
+  const contents = document.querySelectorAll(".resource-details");
+  let allItems = [];
+  let allTags = [];
+
   // Load content from JSON files
   const loadContent = async () => {
     try {
       const [updates, knowledgeArticles, downloads] = await Promise.all([
-        fetch('data/updates.json').then(res => res.json()),
-        fetch('data/knowledge-articles.json').then(res => res.json()),
-        fetch('data/downloads.json').then(res => res.json())
+        fetch("data/updates.json").then((res) => res.json()),
+        fetch("data/knowledge-articles.json").then((res) => res.json()),
+        fetch("data/downloads.json").then((res) => res.json()),
       ]);
 
-      // Collect all tags
-      const allTags = [...new Set([
-        ...updates.flatMap(item => item.tags),
-        ...knowledgeArticles.flatMap(item => item.tags),
-        ...downloads.flatMap(item => item.tags)
-      ])];
+      // Add section identifier and normalize data
+      allItems = [
+        ...updates.map((item) => ({ ...item, section: "updates" })),
+        ...knowledgeArticles.map((item) => ({
+          ...item,
+          section: "knowledge-articles",
+        })),
+        ...downloads.map((item) => ({ ...item, section: "downloads" })),
+      ];
 
-      // Render tags
-      const tagFilter = document.getElementById('tag-filter');
-      allTags.forEach(tag => {
-        const tagElement = document.createElement('span');
-        tagElement.classList.add('tag');
-        tagElement.textContent = tag;
-        tagElement.addEventListener('click', () => {
-          tagElement.classList.toggle('active');
-          filterContent();
-        });
-        tagFilter.appendChild(tagElement);
+      // Collect unique tags
+      allTags = [...new Set(allItems.flatMap((item) => item.tags))];
+
+      // Populate tag dropdown
+      const tagSelect = document.getElementById("tag-select");
+      allTags.forEach((tag) => {
+        const option = document.createElement("option");
+        option.value = tag;
+        option.textContent = tag;
+        tagSelect.appendChild(option);
       });
 
-      // Sort updates by date (most recent first)
+      // Sort items by date (most recent first) for sections with dates
       updates.sort((a, b) => new Date(b.date) - new Date(a.date));
+      knowledgeArticles.sort((a, b) => new Date(b.date) - new Date(a.date));
+      // Downloads may not have dates; use JSON order if no date
 
       // Initial render
       renderContent(updates, knowledgeArticles, downloads);
 
-      // Search functionality
-      const searchInput = document.getElementById('search-input');
-      searchInput.addEventListener('input', () => filterContent());
+      // Event listeners
+      document
+        .getElementById("search-input")
+        .addEventListener("input", () => filterContent());
+      tagSelect.addEventListener("change", () => filterContent());
     } catch (error) {
-      console.error('Error loading content:', error);
+      console.error("Error loading content:", error);
     }
   };
 
-  // Render content to grids
+  // Render content for the active section
   const renderContent = (updates, knowledgeArticles, downloads) => {
-    const updatesGrid = document.getElementById('updates-grid');
-    const knowledgeGrid = document.getElementById('knowledge-articles-grid');
-    const downloadsGrid = document.getElementById('downloads-grid');
+    const updatesContent = document.getElementById("updates-content");
+    const knowledgeContent = document.getElementById(
+      "knowledge-articles-content"
+    );
+    const downloadsContent = document.getElementById("downloads-content");
 
-    updatesGrid.innerHTML = '';
-    knowledgeGrid.innerHTML = '';
-    downloadsGrid.innerHTML = '';
+    updatesContent.innerHTML = "";
+    knowledgeContent.innerHTML = "";
+    downloadsContent.innerHTML = "";
 
-    updates.forEach(item => {
-      const div = document.createElement('div');
-      div.classList.add('resource-item');
+    updates.forEach((item) => {
+      const div = document.createElement("div");
+      div.classList.add("resource-item");
       div.innerHTML = `
         <h4>${item.title}</h4>
-        <p class="timestamp">${new Date(item.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+        <p class="timestamp">Posted on ${new Date(item.date).toLocaleDateString(
+          "en-US",
+          { year: "numeric", month: "long", day: "numeric" }
+        )}</p>
+        <div class="tags">${item.tags
+          .map((tag) => `<span class="tag">${tag}</span>`)
+          .join("")}</div>
         <p>${item.content}</p>
-        <div class="tags">${item.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>
       `;
-      updatesGrid.appendChild(div);
+      updatesContent.appendChild(div);
     });
 
-    knowledgeArticles.forEach(item => {
-      const div = document.createElement('div');
-      div.classList.add('resource-item');
+    knowledgeArticles.forEach((item) => {
+      const div = document.createElement("div");
+      div.classList.add("resource-item");
       div.innerHTML = `
         <h4>${item.title}</h4>
+        <p class="timestamp">Posted on ${new Date(item.date).toLocaleDateString(
+          "en-US",
+          { year: "numeric", month: "long", day: "numeric" }
+        )}</p>
+        <div class="tags">${item.tags
+          .map((tag) => `<span class="tag">${tag}</span>`)
+          .join("")}</div>
         <p>${item.content}</p>
-        <div class="tags">${item.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>
       `;
-      knowledgeGrid.appendChild(div);
+      knowledgeContent.appendChild(div);
     });
 
-    downloads.forEach(item => {
-      const div = document.createElement('div');
-      div.classList.add('resource-item');
+    downloads.forEach((item) => {
+      const div = document.createElement("div");
+      div.classList.add("resource-item");
       div.innerHTML = `
         <h4>${item.title}</h4>
+        ${
+          item.date
+            ? `<p class="timestamp">Posted on ${new Date(
+                item.date
+              ).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}</p>`
+            : ""
+        }
+        <div class="tags">${item.tags
+          .map((tag) => `<span class="tag">${tag}</span>`)
+          .join("")}</div>
         <p>${item.description}</p>
-        <a href="${item.file}" class="download-link" target="_blank">Download</a>
-        <div class="tags">${item.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>
+        <a href="${
+          item.file
+        }" class="download-link" target="_blank">Download</a>
       `;
-      downloadsGrid.appendChild(div);
+      downloadsContent.appendChild(div);
     });
   };
 
-  // Filter content by search and tags
+  // Filter content by search and tag
   const filterContent = () => {
-    const searchInput = document.getElementById('search-input').value.toLowerCase();
-    const activeTags = Array.from(document.querySelectorAll('.tag.active')).map(tag => tag.textContent);
+    const searchInput = document
+      .getElementById("search-input")
+      .value.toLowerCase();
+    const selectedTag = document.getElementById("tag-select").value;
 
     const filterItems = (items) => {
-      return items.filter(item => {
-        const matchesSearch = item.title.toLowerCase().includes(searchInput) || 
-                             (item.content && item.content.toLowerCase().includes(searchInput)) || 
-                             (item.description && item.description.toLowerCase().includes(searchInput));
-        const matchesTags = activeTags.length === 0 || item.tags.some(tag => activeTags.includes(tag));
-        return matchesSearch && matchesTags;
+      return items.filter((item) => {
+        const matchesSearch =
+          item.title.toLowerCase().includes(searchInput) ||
+          (item.content && item.content.toLowerCase().includes(searchInput)) ||
+          (item.description &&
+            item.description.toLowerCase().includes(searchInput)) ||
+          item.tags.some((tag) => tag.toLowerCase().includes(searchInput));
+        const matchesTag = !selectedTag || item.tags.includes(selectedTag);
+        return matchesSearch && matchesTag;
       });
     };
 
     Promise.all([
-      fetch('data/updates.json').then(res => res.json()),
-      fetch('data/knowledge-articles.json').then(res => res.json()),
-      fetch('data/downloads.json').then(res => res.json())
+      fetch("data/updates.json").then((res) => res.json()),
+      fetch("data/knowledge-articles.json").then((res) => res.json()),
+      fetch("data/downloads.json").then((res) => res.json()),
     ]).then(([updates, knowledgeArticles, downloads]) => {
       updates.sort((a, b) => new Date(b.date) - new Date(a.date));
+      knowledgeArticles.sort((a, b) => new Date(b.date) - new Date(a.date));
       renderContent(
         filterItems(updates),
         filterItems(knowledgeArticles),
@@ -116,6 +161,19 @@ document.addEventListener('DOMContentLoaded', () => {
       );
     });
   };
+
+  // Sidebar navigation
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      tabs.forEach((t) => t.classList.remove("active"));
+      contents.forEach((c) => c.classList.remove("active"));
+
+      tab.classList.add("active");
+      const tabId = tab.getAttribute("data-tab");
+      document.getElementById(tabId).classList.add("active");
+      filterContent(); // Re-apply filters for the new section
+    });
+  });
 
   loadContent();
 });

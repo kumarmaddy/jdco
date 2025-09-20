@@ -3,7 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Explore updates, knowledge articles, and downloadable resources from Jayadeva & Co., Bengaluru’s top chartered accountants and tax consultants." />
+    <meta
+      name="description"
+      content="Explore updates, knowledge articles, and downloadable resources from Jayadeva & Co., Bengaluru’s top chartered accountants and tax consultants."
+    />
     <title>Jayadeva & Co.</title>
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="resources.css" />
@@ -33,29 +36,63 @@
 
     <main>
       <section id="resources">
-        <div class="container">
+        <div class="container resources-container">
           <div class="resources-header">
             <h2>Resources & Insights</h2>
-            <div class="search-container">
-              <input type="text" id="search-input" placeholder="Search by keyword or tag..." aria-label="Search resources">
-              <div id="tag-filter" class="tag-filter"></div>
+            <div class="filter-container">
+              <select id="tag-select" aria-label="Filter by tag">
+                <option value="">All Tags</option>
+              </select>
+              <input
+                type="text"
+                id="search-input"
+                placeholder="Search by keyword or tag..."
+                aria-label="Search resources"
+              />
             </div>
           </div>
-          <div class="resources-content">
-            <div class="resources-section" id="updates">
-              <h3>Updates</h3>
-              <p>Stay informed with the latest news and regulatory changes.</p>
-              <div class="resources-grid" id="updates-grid"></div>
+          <div class="resources-main">
+            <div class="resources-sidebar">
+              <h3>Sections</h3>
+              <ul class="resources-menu">
+                <li>
+                  <button class="resource-tab active" data-tab="updates">
+                    Updates
+                  </button>
+                </li>
+                <li>
+                  <button class="resource-tab" data-tab="knowledge-articles">
+                    Knowledge Articles
+                  </button>
+                </li>
+                <li>
+                  <button class="resource-tab" data-tab="downloads">
+                    Downloads
+                  </button>
+                </li>
+              </ul>
             </div>
-            <div class="resources-section" id="knowledge-articles">
-              <h3>Knowledge Articles</h3>
-              <p>Timeless insights to help you navigate tax and business challenges.</p>
-              <div class="resources-grid" id="knowledge-articles-grid"></div>
-            </div>
-            <div class="resources-section" id="downloads">
-              <h3>Downloads</h3>
-              <p>Access sample reports and other valuable resources.</p>
-              <div class="resources-grid" id="downloads-grid"></div>
+            <div class="resources-content">
+              <div id="updates" class="resource-details active">
+                <h3>Updates</h3>
+                <p>
+                  Stay informed with the latest news and regulatory changes.
+                </p>
+                <div id="updates-content"></div>
+              </div>
+              <div id="knowledge-articles" class="resource-details">
+                <h3>Knowledge Articles</h3>
+                <p>
+                  Timeless insights to help you navigate tax and business
+                  challenges.
+                </p>
+                <div id="knowledge-articles-content"></div>
+              </div>
+              <div id="downloads" class="resource-details">
+                <h3>Downloads</h3>
+                <p>Access sample reports and other valuable resources.</p>
+                <div id="downloads-content"></div>
+              </div>
             </div>
           </div>
         </div>
