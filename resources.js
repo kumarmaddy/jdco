@@ -121,6 +121,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const contentText =
         item.content || item.description || "No content available";
       div.innerHTML = `
+        <div class="tags">${(item.tags || [])
+          .map((tag) => `<span class="tag">${tag}</span>`)
+          .join("")}</div>
         <h4>${item.title || "Untitled"}</h4>
         ${
           item.date
@@ -133,22 +136,25 @@ document.addEventListener("DOMContentLoaded", () => {
               })}</p>`
             : ""
         }
-        <div class="tags">${(item.tags || [])
-          .map((tag) => `<span class="tag">${tag}</span>`)
-          .join("")}</div>
         <p class="content-preview">${contentText}</p>
         ${
           item.file
             ? `<a href="${item.file}" class="download-link" target="_blank">Download</a>`
             : ""
         }
-        <span class="read-more">Click to read more</span>
+        <button class="expand-button" title="Click to read more">Expand</button>
       `;
       div.addEventListener("click", (e) => {
-        if (!e.target.closest(".download-link")) {
+        if (
+          !e.target.closest(".download-link") &&
+          !e.target.closest(".expand-button")
+        ) {
           showPopup(item);
         }
       });
+      div
+        .querySelector(".expand-button")
+        ?.addEventListener("click", () => showPopup(item));
       container.appendChild(div);
     };
 
@@ -164,15 +170,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const showPopup = (item) => {
     const contentText =
       item.content || item.description || "No content available";
-    const paragraphs = contentText
+    const parsedContent =
+      typeof marked !== "undefined" ? marked.parse(contentText) : contentText;
+    const paragraphs = parsedContent
       .split("\n\n")
-      .map((paragraph) => {
-        return `<p>${
-          typeof marked !== "undefined" ? marked.parse(paragraph) : paragraph
-        }</p>`;
-      })
+      .map((paragraph) => `<p>${paragraph}</p>`)
       .join("");
     popupContent.innerHTML = `
+      <div class="tags">${(item.tags || [])
+        .map((tag) => `<span class="tag">${tag}</span>`)
+        .join("")}</div>
       <h4>${item.title || "Untitled"}</h4>
       ${
         item.date
@@ -185,9 +192,6 @@ document.addEventListener("DOMContentLoaded", () => {
             })}</p>`
           : ""
       }
-      <div class="tags">${(item.tags || [])
-        .map((tag) => `<span class="tag">${tag}</span>`)
-        .join("")}</div>
       <div class="content">${paragraphs}</div>
       ${
         item.file
@@ -278,7 +282,7 @@ document.addEventListener("DOMContentLoaded", () => {
   tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
       tabs.forEach((t) => t.classList.remove("active"));
-      contents.forEach((c) => c.classList.remove("active"));
+      contents.forEach((t) => t.classList.remove("active"));
 
       tab.classList.add("active");
       const tabId = tab.getAttribute("data-tab");
