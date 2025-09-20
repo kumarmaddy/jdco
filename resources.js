@@ -130,10 +130,12 @@ document.addEventListener("DOMContentLoaded", () => {
       div.dataset.id = `${item.section}-${item.title}`;
       const contentText =
         item.content || item.description || "No content available";
+      // Extract first two lines for preview
+      const lines = contentText.split("\n").slice(0, 2).join("\n");
       const previewText =
         typeof showdown !== "undefined"
-          ? window.markdownConverter.makeHtml(contentText)
-          : contentText;
+          ? window.markdownConverter.makeHtml(lines)
+          : lines;
       console.log("Preview content:", previewText);
       const tagsHtml = (item.tags || [])
         .map((tag) => `<span class="tag">${tag}</span>`)
