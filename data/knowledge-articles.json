@@ -1,14 +1,14 @@
 [
   {
     "title": "Understanding GST for Small Businesses",
-    "date": "2025-09-10",
-    "content": "A comprehensive guide to navigating GST registration, filing, and compliance for small businesses in India.",
-    "tags": ["GST", "Small Business", "Tax"]
+    "date": "2025-07-10",
+    "content": "GST can be complex for small businesses. This guide explains key concepts and compliance requirements.\n\nFor more information, check the [GST Council website](https://www.gst.gov.in).",
+    "tags": ["GST", "Small Business", "Compliance"]
   },
   {
     "title": "Tax Planning Strategies for Startups",
-    "date": "2025-08-01",
-    "content": "Learn how startups can optimize tax liabilities through effective planning and leveraging exemptions.",
-    "tags": ["Tax Planning", "Startups"]
+    "date": "2025-06-15",
+    "content": "Startups face unique tax challenges. This article covers effective tax planning strategies.\n\nLearn more at [Startup India](https://www.startupindia.gov.in).",
+    "tags": ["Startups", "Tax Planning", "Compliance"]
   }
 ]
