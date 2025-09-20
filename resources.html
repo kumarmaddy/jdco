@@ -3,9 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Explore resources from Jayadeva & Co., Bengaluru’s top chartered accountants and tax consultants, including tax, audit, and project report case studies." />
+    <meta name="description" content="Explore updates, knowledge articles, and downloadable resources from Jayadeva & Co., Bengaluru’s top chartered accountants and tax consultants." />
     <title>Jayadeva & Co.</title>
     <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="resources.css" />
   </head>
   <body>
     <header class="sticky-header">
@@ -33,23 +34,28 @@
     <main>
       <section id="resources">
         <div class="container">
-          <h2>Resources & Demonstrations</h2>
-          <p>Explore our collection of case studies and sample documents to understand how we help our clients succeed.</p>
-          <div class="resources-grid">
-            <div class="resource-item">
-              <h3>Tax Compliance Case Study</h3>
-              <p>A detailed case study on how we helped a small business optimize its tax strategy.</p>
-              <a href="files/tax-compliance-case-study.pdf" class="resource-link" target="_blank">Download PDF</a>
+          <div class="resources-header">
+            <h2>Resources & Insights</h2>
+            <div class="search-container">
+              <input type="text" id="search-input" placeholder="Search by keyword or tag..." aria-label="Search resources">
+              <div id="tag-filter" class="tag-filter"></div>
             </div>
-            <div class="resource-item">
-              <h3>Audit Report Sample</h3>
-              <p>A sample audit report showcasing our thorough and transparent approach.</p>
-              <a href="files/sample-audit-report.pdf" class="resource-link" target="_blank">Download PDF</a>
+          </div>
+          <div class="resources-content">
+            <div class="resources-section" id="updates">
+              <h3>Updates</h3>
+              <p>Stay informed with the latest news and regulatory changes.</p>
+              <div class="resources-grid" id="updates-grid"></div>
             </div>
-            <div class="resource-item">
-              <h3>GST Consulting Guide</h3>
-              <p>A guide to navigating GST compliance for businesses in India.</p>
-              <a href="files/gst-consulting-guide.pdf" class="resource-link" target="_blank">Download PDF</a>
+            <div class="resources-section" id="knowledge-articles">
+              <h3>Knowledge Articles</h3>
+              <p>Timeless insights to help you navigate tax and business challenges.</p>
+              <div class="resources-grid" id="knowledge-articles-grid"></div>
+            </div>
+            <div class="resources-section" id="downloads">
+              <h3>Downloads</h3>
+              <p>Access sample reports and other valuable resources.</p>
+              <div class="resources-grid" id="downloads-grid"></div>
             </div>
           </div>
         </div>
@@ -63,6 +69,7 @@
     </footer>
 
     <script src="nav.js"></script>
+    <script src="resources.js"></script>
     <script>
       document.getElementById("year").textContent = new Date().getFullYear();
     </script>
