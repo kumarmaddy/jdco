@@ -131,7 +131,7 @@
 .resource-item .timestamp {
   font-size: 14px;
   color: #666;
-  margin: 0 0 5px;
+  margin: 0 0 1em;
 }
 
 .resource-item .tags {
