@@ -3,25 +3,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const contents = document.querySelectorAll(".resource-details");
   const popup = document.getElementById("resource-popup");
   const popupContent = document.getElementById("popup-content");
-  const closeButton = document.querySelector(".close-button");
   let allItems = [];
   let allTags = [];
 
-  // Configure marked.js to add target="_blank" to links
-  if (typeof marked !== "undefined") {
-    marked.setOptions({
-      renderer: new marked.Renderer(),
-      breaks: true,
-      gfm: true,
+  // Configure showdown.js for markdown parsing
+  if (typeof showdown !== "undefined") {
+    const converter = new showdown.Converter({
+      ghCompatibleHeaderId: true,
+      simpleLineBreaks: true,
+      openLinksInNewWindow: true,
     });
-    const renderer = new marked.Renderer();
-    renderer.link = (href, title, text) => {
-      return `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`;
-    };
-    marked.use({ renderer });
-    console.log("marked.js loaded successfully");
+    converter.setFlavor("github");
+    console.log("showdown.js loaded successfully");
+    window.markdownConverter = converter; // Make converter globally accessible
   } else {
-    console.error("marked.js not loaded");
+    console.error("showdown.js not loaded");
   }
 
   // Load content from JSON files
@@ -123,10 +119,12 @@ document.addEventListener("DOMContentLoaded", () => {
       const contentText =
         item.content || item.description || "No content available";
       div.innerHTML = `
-        <div class="tags">${(item.tags || [])
-          .map((tag) => `<span class="tag">${tag}</span>`)
-          .join("")}</div>
-        <button class="expand-icon" title="Click to read more"><span class="material-icons">open_in_full</span></button>
+        <div class="header-row">
+          <div class="tags">${(item.tags || [])
+            .map((tag) => `<span class="tag">${tag}</span>`)
+            .join("")}</div>
+          <button class="expand-icon" title="Click to read more"><span class="material-icons">open_in_full</span></button>
+        </div>
         <h4>${item.title || "Untitled"}</h4>
         ${
           item.date
@@ -174,8 +172,8 @@ document.addEventListener("DOMContentLoaded", () => {
       item.content || item.description || "No content available";
     console.log("Raw content:", contentText);
     const parsedContent =
-      typeof marked !== "undefined"
-        ? marked.parse(contentText, { async: false })
+      typeof showdown !== "undefined"
+        ? window.markdownConverter.makeHtml(contentText)
         : contentText;
     console.log("Parsed content:", parsedContent);
     const paragraphs = parsedContent
@@ -184,9 +182,12 @@ document.addEventListener("DOMContentLoaded", () => {
       .join("");
     console.log("Final HTML:", paragraphs);
     popupContent.innerHTML = `
-      <div class="tags">${(item.tags || [])
-        .map((tag) => `<span class="tag">${tag}</span>`)
-        .join("")}</div>
+      <div class="header-row">
+        <div class="tags">${(item.tags || [])
+          .map((tag) => `<span class="tag">${tag}</span>`)
+          .join("")}</div>
+        <button class="close-button" aria-label="Close popup">×</button>
+      </div>
       <h4>${item.title || "Untitled"}</h4>
       ${
         item.date
@@ -210,8 +211,10 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // Close popup
-  closeButton.addEventListener("click", () => {
-    popup.classList.remove("active");
+  popup.addEventListener("click", (e) => {
+    if (e.target === popup || e.target.classList.contains("close-button")) {
+      popup.classList.remove("active");
+    }
   });
 
   // Filter content by search and tag
@@ -287,7 +290,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Sidebar navigation
   tabs.forEach((tab) => {
-    tab.addEventListener("click", () => {
+    tab.addEventListener("click", (e) => {
+      e.preventDefault();
       tabs.forEach((t) => t.classList.remove("active"));
       contents.forEach((t) => t.classList.remove("active"));
 
