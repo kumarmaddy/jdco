@@ -70,7 +70,9 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("All items:", allItems);
 
       // Collect unique tags
-      allTags = [...new Set(allItems.flatMap((item) => item.tags || []))];
+      allTags = [
+        ...new Set(allItems.flatMap((item) => item.tags || [])),
+      ].sort();
       console.log("All tags:", allTags);
 
       // Populate tag dropdown
@@ -143,6 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const previewText = convertMarkdownLinks(lines);
       console.log("Preview content:", previewText);
       const tagsHtml = (item.tags || [])
+        .sort()
         .map((tag) => `<span class="tag">${tag}</span>`)
         .join("");
       const pinnedIcon = item.pinned
@@ -209,6 +212,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .join("");
     console.log("Final HTML:", paragraphs);
     const tagsHtml = (item.tags || [])
+      .sort()
       .map((tag) => `<span class="tag">${tag}</span>`)
       .join("");
     const pinnedIcon = item.pinned
