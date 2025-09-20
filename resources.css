@@ -134,18 +134,11 @@
   margin-bottom: 10px;
 }
 
-.header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-  min-height: 24px; /* Ensure visibility even if tags are empty */
-}
-
 .resource-item .tags {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+  margin-bottom: 10px;
 }
 
 .resource-item .tag {
@@ -179,6 +172,9 @@
 }
 
 .resource-item .expand-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -189,11 +185,6 @@
 .resource-item .expand-icon .material-icons {
   font-size: 18px;
   color: #666;
-  transition: color 0.3s ease;
-}
-
-.resource-item .expand-icon:hover .material-icons {
-  color: #fff;
 }
 
 .popup {
@@ -240,6 +231,9 @@
 }
 
 .popup-content .close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
   background: transparent;
   border: none;
   font-size: 18px;
@@ -247,11 +241,6 @@
   color: #666;
   padding: 4px;
   line-height: 1;
-  transition: color 0.3s ease;
-}
-
-.popup-content .close-button:hover {
-  color: #fff;
 }
 
 .popup-content h4 {
@@ -265,18 +254,11 @@
   margin-bottom: 10px;
 }
 
-.popup-content .header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-  min-height: 24px;
-}
-
 .popup-content .tags {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+  margin-bottom: 10px;
 }
 
 .popup-content .tag {
@@ -336,11 +318,6 @@
   .popup-content {
     width: 95%;
     max-height: 90vh;
-  }
-
-  .header-row {
-    flex-wrap: wrap;
-    gap: 6px;
   }
 
   .resource-item .expand-icon,
