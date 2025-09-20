@@ -150,15 +150,16 @@ document.addEventListener("DOMContentLoaded", () => {
         <h4>${item.title || "Untitled"}</h4>
         ${
           item.date
-            ? `<div class="content-wrapper"><p class="timestamp">Posted on ${new Date(
+            ? `<p class="timestamp">Posted on ${new Date(
                 item.date
               ).toLocaleDateString("en-US", {
                 year: "numeric",
                 month: "long",
                 day: "numeric",
-              })}</p><p class="content-preview">${previewText}</p></div>`
+              })}</p>`
             : ""
         }
+        <p class="content-preview">${previewText}</p>
         ${
           item.file
             ? `<a href="${item.file}" class="download-link" target="_blank">Download</a>`
