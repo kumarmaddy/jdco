@@ -340,8 +340,9 @@
 
   .popup-content {
     width: 90%;
-    margin: 0 5%;
-    max-height: 90vh;
+    margin: 10% 5%;
+    max-height: 80vh;
+    overflow-y: auto;
   }
 
   .resource-item .expand-icon,
