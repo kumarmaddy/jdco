@@ -22,10 +22,28 @@ document.addEventListener("DOMContentLoaded", () => {
   const loadContent = async () => {
     try {
       const [updates, knowledgeArticles, downloads] = await Promise.all([
-        fetch("data/updates.json").then((res) => res.json()),
-        fetch("data/knowledge-articles.json").then((res) => res.json()),
-        fetch("data/downloads.json").then((res) => res.json()),
+        fetch("data/updates.json").then((res) => {
+          if (!res.ok)
+            throw new Error(`Failed to fetch updates.json: ${res.status}`);
+          return res.json();
+        }),
+        fetch("data/knowledge-articles.json").then((res) => {
+          if (!res.ok)
+            throw new Error(
+              `Failed to fetch knowledge-articles.json: ${res.status}`
+            );
+          return res.json();
+        }),
+        fetch("data/downloads.json").then((res) => {
+          if (!res.ok)
+            throw new Error(`Failed to fetch downloads.json: ${res.status}`);
+          return res.json();
+        }),
       ]);
+
+      console.log("Loaded updates:", updates);
+      console.log("Loaded knowledge articles:", knowledgeArticles);
+      console.log("Loaded downloads:", downloads);
 
       // Add section identifier and normalize data
       allItems = [
@@ -37,11 +55,15 @@ document.addEventListener("DOMContentLoaded", () => {
         ...downloads.map((item) => ({ ...item, section: "downloads" })),
       ];
 
+      console.log("All items:", allItems);
+
       // Collect unique tags
-      allTags = [...new Set(allItems.flatMap((item) => item.tags))];
+      allTags = [...new Set(allItems.flatMap((item) => item.tags || []))];
+      console.log("All tags:", allTags);
 
       // Populate tag dropdown
       const tagSelect = document.getElementById("tag-select");
+      tagSelect.innerHTML = '<option value="">All Tags</option>';
       allTags.forEach((tag) => {
         const option = document.createElement("option");
         option.value = tag;
@@ -56,14 +78,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Initial render
       renderContent(updates, knowledgeArticles, downloads);
-
-      // Event listeners
-      document
-        .getElementById("search-input")
-        .addEventListener("input", () => filterContent());
-      tagSelect.addEventListener("change", () => filterContent());
     } catch (error) {
       console.error("Error loading content:", error);
+      document.getElementById("updates-content").innerHTML =
+        "<p>Error loading content. Please try again later.</p>";
     }
   };
 
@@ -96,10 +114,10 @@ document.addEventListener("DOMContentLoaded", () => {
               })}</p>`
             : ""
         }
-        <div class="tags">${item.tags
+        <div class="tags">${(item.tags || [])
           .map((tag) => `<span class="tag">${tag}</span>`)
           .join("")}</div>
-        <p class="content-preview">${item.content || item.description}</p>
+        <p class="content-preview">${item.content || item.description || ""}</p>
         ${
           item.file
             ? `<a href="${item.file}" class="download-link" target="_blank">Download</a>`
@@ -114,15 +132,18 @@ document.addEventListener("DOMContentLoaded", () => {
       container.appendChild(div);
     };
 
+    console.log("Rendering updates:", updates);
     updates.forEach((item) => renderItem(item, updatesContent));
+    console.log("Rendering knowledge articles:", knowledgeArticles);
     knowledgeArticles.forEach((item) => renderItem(item, knowledgeContent));
+    console.log("Rendering downloads:", downloads);
     downloads.forEach((item) => renderItem(item, downloadsContent));
   };
 
   // Show popup with full content
   const showPopup = (item) => {
     // Parse content with marked.js for links and split into paragraphs
-    const content = (item.content || item.description)
+    const content = (item.content || item.description || "")
       .split("\n\n")
       .map((paragraph) => `<p>${marked.parse(paragraph)}</p>`)
       .join("");
@@ -139,7 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
             })}</p>`
           : ""
       }
-      <div class="tags">${item.tags
+      <div class="tags">${(item.tags || [])
         .map((tag) => `<span class="tag">${tag}</span>`)
         .join("")}</div>
       <div class="content">${content}</div>
@@ -167,12 +188,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const filterItems = (items) => {
       return items.filter((item) => {
         const matchesSearch =
-          item.title.toLowerCase().includes(searchInput) ||
+          (item.title || "").toLowerCase().includes(searchInput) ||
           (item.content && item.content.toLowerCase().includes(searchInput)) ||
           (item.description &&
             item.description.toLowerCase().includes(searchInput)) ||
-          item.tags.some((tag) => tag.toLowerCase().includes(searchInput));
-        const matchesTag = !selectedTag || item.tags.includes(selectedTag);
+          (item.tags || []).some((tag) =>
+            tag.toLowerCase().includes(searchInput)
+          );
+        const matchesTag =
+          !selectedTag || (item.tags || []).includes(selectedTag);
         return matchesSearch && matchesTag;
       });
     };
@@ -181,16 +205,22 @@ document.addEventListener("DOMContentLoaded", () => {
       fetch("data/updates.json").then((res) => res.json()),
       fetch("data/knowledge-articles.json").then((res) => res.json()),
       fetch("data/downloads.json").then((res) => res.json()),
-    ]).then(([updates, knowledgeArticles, downloads]) => {
-      updates.sort((a, b) => new Date(b.date) - new Date(a.date));
-      knowledgeArticles.sort((a, b) => new Date(b.date) - new Date(a.date));
-      downloads.sort((a, b) => new Date(b.date) - new Date(a.date));
-      renderContent(
-        filterItems(updates),
-        filterItems(knowledgeArticles),
-        filterItems(downloads)
-      );
-    });
+    ])
+      .then(([updates, knowledgeArticles, downloads]) => {
+        updates.sort((a, b) => new Date(b.date) - new Date(a.date));
+        knowledgeArticles.sort((a, b) => new Date(b.date) - new Date(a.date));
+        downloads.sort((a, b) => new Date(b.date) - new Date(a.date));
+        renderContent(
+          filterItems(updates),
+          filterItems(knowledgeArticles),
+          filterItems(downloads)
+        );
+      })
+      .catch((error) => {
+        console.error("Error filtering content:", error);
+        document.getElementById("updates-content").innerHTML =
+          "<p>Error filtering content. Please try again later.</p>";
+      });
   };
 
   // Sidebar navigation
