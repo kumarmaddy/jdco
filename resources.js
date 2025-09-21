@@ -33,6 +33,93 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   }
 
+  // Move filterItems to global scope
+  const filterItems = (items) => {
+    const searchText = searchInput.value.trim().toLowerCase();
+    const selectedTag = tagSelect.value;
+
+    return items.filter((item) => {
+      const textContent =
+        (item.title || "").toLowerCase() +
+        " " +
+        (item.content || "").toLowerCase() +
+        " " +
+        (item.description || "").toLowerCase() +
+        " " +
+        (item.tags || []).join(" ").toLowerCase();
+      const matchesSearch = !searchText || textContent.includes(searchText);
+      const matchesTag =
+        !selectedTag || (item.tags || []).includes(selectedTag);
+      console.log(
+        `Item: ${item.title}, Matches Search: ${matchesSearch}, Matches Tag: ${matchesTag}`
+      );
+      return matchesSearch && matchesTag;
+    });
+  };
+
+  // Move sortItems to global scope
+  const sortItems = (items) => {
+    const pinned = items
+      .filter((item) => item.pinned)
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
+    const nonPinned = items
+      .filter((item) => !item.pinned)
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
+    return [...pinned, ...nonPinned];
+  };
+
+  // Move renderItem to global scope
+  const renderItem = (item, container) => {
+    const div = document.createElement("div");
+    div.classList.add("resource-item");
+    div.dataset.id = `${item.section}-${item.title}`;
+    const contentText =
+      item.content || item.description || "No content available";
+    const lines = contentText.split("\n").slice(0, 2).join(" ");
+    const previewText = convertMarkdownLinks(lines);
+    const tagsHtml = (item.tags || [])
+      .sort()
+      .map((tag) => `<span class="tag">${tag}</span>`)
+      .join("");
+    const pinnedIcon = item.pinned
+      ? '<span class="material-icons pinned-icon">push_pin</span>'
+      : "";
+    div.innerHTML = `
+      <div class="tags">${tagsHtml}${pinnedIcon}</div>
+      <button class="expand-icon" title="Click to read more"><span class="material-icons">open_in_full</span></button>
+      <h4>${item.title || "Untitled"}</h4>
+      ${
+        item.date
+          ? `<p class="timestamp">Posted on ${new Date(
+              item.date
+            ).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}</p>`
+          : ""
+      }
+      <p class="content-preview">${previewText}</p>
+      ${
+        item.file
+          ? `<a href="${item.file}" class="download-link" target="_blank">Download</a>`
+          : ""
+      }
+    `;
+    div.addEventListener("click", (e) => {
+      if (
+        !e.target.closest(".download-link") &&
+        !e.target.closest(".expand-icon")
+      ) {
+        showPopup(item);
+      }
+    });
+    div
+      .querySelector(".expand-icon")
+      ?.addEventListener("click", () => showPopup(item));
+    container.appendChild(div);
+  };
+
   // Load content from JSON files
   const loadContent = async () => {
     try {
@@ -73,7 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ...downloads.map((item) => ({ ...item, section: "downloads" })),
       ];
 
-      console.log("All items populated:", allItems.length); // Debug log
+      console.log("All items populated:", allItems.length);
 
       allTags = [
         ...new Set(allItems.flatMap((item) => item.tags || [])),
@@ -87,16 +174,6 @@ document.addEventListener("DOMContentLoaded", () => {
         option.textContent = tag;
         tagSelect.appendChild(option);
       });
-
-      const sortItems = (items) => {
-        const pinned = items
-          .filter((item) => item.pinned)
-          .sort((a, b) => new Date(b.date) - new Date(a.date));
-        const nonPinned = items
-          .filter((item) => !item.pinned)
-          .sort((a, b) => new Date(b.date) - new Date(a.date));
-        return [...pinned, ...nonPinned];
-      };
 
       renderContent(
         sortItems(updates),
@@ -149,13 +226,13 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelector(".resources-content").appendChild(searchResults);
       } else {
         searchResults.classList.add("active");
-        searchResultsContent.innerHTML = ""; // Clear to prevent duplication
+        searchResultsContent.innerHTML = "";
       }
     } else {
       contents.forEach((content) => content.classList.remove("active"));
       tabs.forEach((tab) => tab.classList.remove("disabled"));
       const activeTab = document.querySelector(".resource-tab.active");
-      if (!activeTab) tabs[0].classList.add("active"); // Default to Updates
+      if (!activeTab) tabs[0].classList.add("active");
       const activeTabId = document
         .querySelector(".resource-tab.active")
         ?.getAttribute("data-tab");
@@ -174,60 +251,9 @@ document.addEventListener("DOMContentLoaded", () => {
       downloadsContent.innerHTML = "";
     }
 
-    const renderItem = (item, container) => {
-      const div = document.createElement("div");
-      div.classList.add("resource-item");
-      div.dataset.id = `${item.section}-${item.title}`;
-      const contentText =
-        item.content || item.description || "No content available";
-      const lines = contentText.split("\n").slice(0, 2).join(" ");
-      const previewText = convertMarkdownLinks(lines);
-      const tagsHtml = (item.tags || [])
-        .sort()
-        .map((tag) => `<span class="tag">${tag}</span>`)
-        .join("");
-      const pinnedIcon = item.pinned
-        ? '<span class="material-icons pinned-icon">push_pin</span>'
-        : "";
-      div.innerHTML = `
-        <div class="tags">${tagsHtml}${pinnedIcon}</div>
-        <button class="expand-icon" title="Click to read more"><span class="material-icons">open_in_full</span></button>
-        <h4>${item.title || "Untitled"}</h4>
-        ${
-          item.date
-            ? `<p class="timestamp">Posted on ${new Date(
-                item.date
-              ).toLocaleDateString("en-US", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}</p>`
-            : ""
-        }
-        <p class="content-preview">${previewText}</p>
-        ${
-          item.file
-            ? `<a href="${item.file}" class="download-link" target="_blank">Download</a>`
-            : ""
-        }
-      `;
-      div.addEventListener("click", (e) => {
-        if (
-          !e.target.closest(".download-link") &&
-          !e.target.closest(".expand-icon")
-        ) {
-          showPopup(item);
-        }
-      });
-      div
-        .querySelector(".expand-icon")
-        ?.addEventListener("click", () => showPopup(item));
-      container.appendChild(div);
-    };
-
     if (isSearch) {
       const filteredItems = filterItems(allItems);
-      console.log("Filtered items count:", filteredItems.length); // Debug log
+      console.log("Filtered items count:", filteredItems.length);
       filteredItems.forEach((item) => renderItem(item, searchResultsContent));
       if (filteredItems.length === 0) {
         searchResultsContent.innerHTML = "<p>No results found.</p>";
@@ -290,7 +316,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Filter content by search and tag
+  // Filter content by search and tag - SIMPLIFIED VERSION
   const filterContent = () => {
     const searchText = searchInput.value.trim().toLowerCase();
     const selectedTag = tagSelect.value;
@@ -305,76 +331,12 @@ document.addEventListener("DOMContentLoaded", () => {
       searchInput.disabled = false;
     }
 
-    const filterItems = (items) => {
-      return items.filter((item) => {
-        const textContent =
-          (item.title || "").toLowerCase() +
-          " " +
-          (item.content || "").toLowerCase() +
-          " " +
-          (item.description || "").toLowerCase() +
-          " " +
-          (item.tags || []).join(" ").toLowerCase();
-        const matchesSearch = !searchText || textContent.includes(searchText);
-        const matchesTag =
-          !selectedTag || (item.tags || []).includes(selectedTag);
-        console.log(
-          `Item: ${item.title}, Matches Search: ${matchesSearch}, Matches Tag: ${matchesTag}`
-        ); // Debug log
-        return matchesSearch && matchesTag;
-      });
-    };
-
-    const sortItems = (items) => {
-      const pinned = items
-        .filter((item) => item.pinned)
-        .sort((a, b) => new Date(b.date) - new Date(a.date));
-      const nonPinned = items
-        .filter((item) => !item.pinned)
-        .sort((a, b) => new Date(b.date) - new Date(a.date));
-      return [...pinned, ...nonPinned];
-    };
-
     if (searchText || selectedTag) {
-      Promise.all([
-        fetch("data/updates.json").then((res) => res.json()),
-        fetch("data/knowledge-articles.json").then((res) => res.json()),
-        fetch("data/downloads.json").then((res) => res.json()),
-      ])
-        .then(([updates, knowledgeArticles, downloads]) => {
-          renderContent(
-            sortItems(updates),
-            sortItems(knowledgeArticles),
-            sortItems(downloads),
-            true
-          );
-          const searchResultsContent = document.getElementById(
-            "search-results-content"
-          );
-          const allData = [...updates, ...knowledgeArticles, ...downloads];
-          const filteredItems = filterItems(allData);
-          searchResultsContent.innerHTML = ""; // Clear to prevent duplication
-          if (filteredItems.length > 0) {
-            filteredItems.forEach((item) =>
-              renderItem(item, searchResultsContent)
-            );
-          } else {
-            searchResultsContent.innerHTML = "<p>No results found.</p>";
-          }
-          clearButton.classList.add("active");
-          console.log("Filtered items count:", filteredItems.length); // Debug log
-        })
-        .catch((error) => {
-          console.error("Error filtering content:", error);
-          const searchResultsContent = document.getElementById(
-            "search-results-content"
-          );
-          if (searchResultsContent) {
-            searchResultsContent.innerHTML =
-              "<p>Error filtering content. Please try again later or check console for details.</p>";
-          }
-        });
+      // Show search results
+      renderContent([], [], [], true);
+      clearButton.classList.add("active");
     } else {
+      // Show normal content
       Promise.all([
         fetch("data/updates.json").then((res) => res.json()),
         fetch("data/knowledge-articles.json").then((res) => res.json()),
@@ -387,19 +349,9 @@ document.addEventListener("DOMContentLoaded", () => {
             sortItems(downloads)
           );
           clearButton.classList.remove("active");
-          console.log(
-            "Clear button deactivated, classes:",
-            clearButton.classList
-          );
         })
         .catch((error) => {
           console.error("Error loading content:", error);
-          document.getElementById("updates-content").innerHTML =
-            "<p>Error loading content. Please try again later.</p>";
-          document.getElementById("knowledge-articles-content").innerHTML =
-            "<p>Error loading content. Please try again later.</p>";
-          document.getElementById("downloads-content").innerHTML =
-            "<p>Error loading content. Please try again later.</p>";
         });
     }
   };
@@ -419,15 +371,6 @@ document.addEventListener("DOMContentLoaded", () => {
           fetch("data/knowledge-articles.json").then((res) => res.json()),
           fetch("data/downloads.json").then((res) => res.json()),
         ]).then(([updates, knowledgeArticles, downloads]) => {
-          const sortItems = (items) => {
-            const pinned = items
-              .filter((item) => item.pinned)
-              .sort((a, b) => new Date(b.date) - new Date(a.date));
-            const nonPinned = items
-              .filter((item) => !item.pinned)
-              .sort((a, b) => new Date(b.date) - new Date(a.date));
-            return [...pinned, ...nonPinned];
-          };
           if (tabId === "updates") renderContent(sortItems(updates), [], []);
           else if (tabId === "knowledge-articles")
             renderContent([], sortItems(knowledgeArticles), []);
