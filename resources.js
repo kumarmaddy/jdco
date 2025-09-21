@@ -300,14 +300,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const filterItems = (items) => {
       return items.filter((item) => {
-        const matchesSearch =
-          !searchText ||
-          (item.title || "").toLowerCase().includes(searchText) ||
-          (item.content || "").toLowerCase().includes(searchText) ||
-          (item.description || "").toLowerCase().includes(searchText) ||
-          (item.tags || []).some((tag) =>
-            tag.toLowerCase().includes(searchText)
-          );
+        const textContent =
+          (item.title || "").toLowerCase() +
+          " " +
+          (item.content || "").toLowerCase() +
+          " " +
+          (item.description || "").toLowerCase() +
+          " " +
+          (item.tags || []).join(" ").toLowerCase();
+        const matchesSearch = !searchText || textContent.includes(searchText);
         const matchesTag =
           !selectedTag || (item.tags || []).includes(selectedTag);
         return matchesSearch && matchesTag;
@@ -317,26 +318,30 @@ document.addEventListener("DOMContentLoaded", () => {
     const sortItems = (items) => {
       const pinned = items
         .filter((item) => item.pinned)
-        .sort(
-          (a, b) =>
-            new Date(b.date || "1970-01-01") - new Date(a.date || "1970-01-01")
-        );
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
       const nonPinned = items
         .filter((item) => !item.pinned)
-        .sort(
-          (a, b) =>
-            new Date(b.date || "1970-01-01") - new Date(a.date || "1970-01-01")
-        );
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
       return [...pinned, ...nonPinned];
     };
 
     if (searchText || selectedTag) {
       Promise.all([
-        fetch("data/updates.json").then((res) => res.json()),
-        fetch("data/knowledge-articles.json").then((res) => res.json()),
-        fetch("data/downloads.json").then((res) => res.json()),
+        fetch("data/updates.json").then((res) => {
+          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+          return res.json();
+        }),
+        fetch("data/knowledge-articles.json").then((res) => {
+          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+          return res.json();
+        }),
+        fetch("data/downloads.json").then((res) => {
+          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+          return res.json();
+        }),
       ])
         .then(([updates, knowledgeArticles, downloads]) => {
+          const allData = [...updates, ...knowledgeArticles, ...downloads];
           renderContent(
             sortItems(updates),
             sortItems(knowledgeArticles),
@@ -346,19 +351,27 @@ document.addEventListener("DOMContentLoaded", () => {
           const searchResultsContent = document.getElementById(
             "search-results-content"
           );
-          const allData = [...updates, ...knowledgeArticles, ...downloads];
           const filteredItems = filterItems(allData);
           searchResultsContent.innerHTML = ""; // Clear to prevent duplication
-          filteredItems.forEach((item) =>
-            renderItem(item, searchResultsContent)
-          );
+          if (filteredItems.length > 0) {
+            filteredItems.forEach((item) =>
+              renderItem(item, searchResultsContent)
+            );
+          } else {
+            searchResultsContent.innerHTML = "<p>No results found.</p>";
+          }
           clearButton.classList.add("active");
           console.log("Filtered items count:", filteredItems.length); // Debug log
         })
         .catch((error) => {
           console.error("Error filtering content:", error);
-          document.getElementById("search-results-content").innerHTML =
-            "<p>Error filtering content. Please try again later.</p>";
+          const searchResultsContent = document.getElementById(
+            "search-results-content"
+          );
+          if (searchResultsContent) {
+            searchResultsContent.innerHTML =
+              "<p>Error filtering content. Please try again later or check console for details.</p>";
+          }
         });
     } else {
       Promise.all([
