@@ -29,14 +29,14 @@
 #tag-select {
   padding: 10px;
   font-size: 16px;
-  border: 1px solid #ccc;
+  border: 1px solid #ccc; /* Ensure border on all sides */
   border-radius: 5px;
   background-color: #fff;
   cursor: pointer;
   width: auto;
   min-width: 150px;
-  max-height: 200px;
-  overflow-y: auto;
+  max-height: 200px; /* Retain scrollable height */
+  overflow-y: auto; /* Ensure scrollability for >12 tags */
 }
 
 #search-input {
@@ -44,7 +44,7 @@
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  width: 250px; /* Increased width for desktop to show full placeholder */
+  width: 250px;
 }
 
 .resources-main {
@@ -313,7 +313,7 @@
 
   .filter-container {
     flex-direction: column;
-    align-items: stretch;
+    align-items: center; /* Center align the container */
     width: 100%;
   }
 
@@ -322,6 +322,14 @@
     width: 100%; /* Match widths on mobile */
     max-width: 100%; /* Prevent stretching beyond screen */
     box-sizing: border-box; /* Include padding in width calculation */
+  }
+
+  .clear-button {
+    width: 100%; /* Match width with other inputs */
+    max-width: 100%; /* Prevent stretching beyond screen */
+    box-sizing: border-box; /* Include padding in width calculation */
+    text-align: center; /* Center the button text */
+    margin-top: 10px; /* Add spacing above clear button */
   }
 
   .resources-main {
