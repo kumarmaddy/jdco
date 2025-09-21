@@ -277,8 +277,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (isSearch) {
       const allData = [...updates, ...knowledgeArticles, ...downloads];
-      const sortedItems = sortItems(allData);
-      console.log("Filtered items count:", sortedItems.length); // Debug log
+      const filteredItems = filterItems(
+        allData,
+        searchInput.value.trim().toLowerCase(),
+        tagSelect.value
+      );
+      const sortedItems = sortItems(filteredItems); // Sort after filtering to ensure pinned items are at the top
+      console.log("Filtered and sorted items count:", sortedItems.length); // Debug log
       if (sortedItems.length > 0) {
         sortedItems.forEach((item) => renderItem(item, searchResultsContent));
       } else {
@@ -379,12 +384,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }),
     ])
       .then(([updates, knowledgeArticles, downloads]) => {
-        renderContent(
-          sortItems(updates),
-          sortItems(knowledgeArticles),
-          sortItems(downloads),
-          true
-        );
+        renderContent(updates, knowledgeArticles, downloads, true); // Pass unsorted data
         const searchResultsContent = document.getElementById(
           "search-results-content"
         );
@@ -392,14 +392,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const filteredItems = filterItems(allData, searchText, selectedTag);
         searchResultsContent.innerHTML = ""; // Clear to prevent duplication
         if (filteredItems.length > 0) {
-          filteredItems.forEach((item) =>
-            renderItem(item, searchResultsContent)
-          );
+          const sortedItems = sortItems(filteredItems);
+          sortedItems.forEach((item) => renderItem(item, searchResultsContent));
         } else {
           searchResultsContent.innerHTML = "<p>No results found.</p>";
         }
         clearButton.classList.add("active");
-        console.log("Filtered items count:", filteredItems.length); // Debug log
+        console.log("Filtered and sorted items count:", filteredItems.length); // Debug log
       })
       .catch((error) => {
         console.error("Error filtering content:", error);
