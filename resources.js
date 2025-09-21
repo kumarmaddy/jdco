@@ -39,19 +39,23 @@ document.addEventListener("DOMContentLoaded", () => {
       const [updates, knowledgeArticles, downloads] = await Promise.all([
         fetch("data/updates.json").then((res) => {
           if (!res.ok)
-            throw new Error(`Failed to fetch updates.json: ${res.status}`);
+            throw new Error(
+              `HTTP error! status: ${res.status} for updates.json`
+            );
           return res.json();
         }),
         fetch("data/knowledge-articles.json").then((res) => {
           if (!res.ok)
             throw new Error(
-              `Failed to fetch knowledge-articles.json: ${res.status}`
+              `HTTP error! status: ${res.status} for knowledge-articles.json`
             );
           return res.json();
         }),
         fetch("data/downloads.json").then((res) => {
           if (!res.ok)
-            throw new Error(`Failed to fetch downloads.json: ${res.status}`);
+            throw new Error(
+              `HTTP error! status: ${res.status} for downloads.json`
+            );
           return res.json();
         }),
       ]);
@@ -222,9 +226,12 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     if (isSearch) {
-      const filteredItems = filterItems(allItems);
+      const filteredItems = filterItems(allItems.length > 0 ? allItems : []);
       console.log("Filtered items:", filteredItems); // Debug log
       filteredItems.forEach((item) => renderItem(item, searchResultsContent));
+      if (filteredItems.length === 0) {
+        searchResultsContent.innerHTML = "<p>No results found.</p>";
+      }
     } else {
       updates.forEach((item) => renderItem(item, updatesContent));
       knowledgeArticles.forEach((item) => renderItem(item, knowledgeContent));
@@ -311,6 +318,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const matchesSearch = !searchText || textContent.includes(searchText);
         const matchesTag =
           !selectedTag || (item.tags || []).includes(selectedTag);
+        console.log(
+          `Item: ${item.title}, Matches Search: ${matchesSearch}, Matches Tag: ${matchesTag}`
+        ); // Debug log
         return matchesSearch && matchesTag;
       });
     };
@@ -326,17 +336,27 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     if (searchText || selectedTag) {
+      // Try fetching fresh data, fall back to allItems if it fails
       Promise.all([
         fetch("data/updates.json").then((res) => {
-          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+          if (!res.ok)
+            throw new Error(
+              `HTTP error! status: ${res.status} for updates.json`
+            );
           return res.json();
         }),
         fetch("data/knowledge-articles.json").then((res) => {
-          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+          if (!res.ok)
+            throw new Error(
+              `HTTP error! status: ${res.status} for knowledge-articles.json`
+            );
           return res.json();
         }),
         fetch("data/downloads.json").then((res) => {
-          if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+          if (!res.ok)
+            throw new Error(
+              `HTTP error! status: ${res.status} for downloads.json`
+            );
           return res.json();
         }),
       ])
@@ -361,17 +381,39 @@ document.addEventListener("DOMContentLoaded", () => {
             searchResultsContent.innerHTML = "<p>No results found.</p>";
           }
           clearButton.classList.add("active");
-          console.log("Filtered items count:", filteredItems.length); // Debug log
+          console.log("Filtered items count from fetch:", filteredItems.length); // Debug log
         })
         .catch((error) => {
-          console.error("Error filtering content:", error);
+          console.error(
+            "Error fetching fresh data, falling back to allItems:",
+            error
+          );
+          renderContent(
+            sortItems(allItems.filter((i) => i.section === "updates")),
+            sortItems(
+              allItems.filter((i) => i.section === "knowledge-articles")
+            ),
+            sortItems(allItems.filter((i) => i.section === "downloads")),
+            true
+          );
           const searchResultsContent = document.getElementById(
             "search-results-content"
           );
-          if (searchResultsContent) {
+          const filteredItems = filterItems(allItems);
+          searchResultsContent.innerHTML = ""; // Clear to prevent duplication
+          if (filteredItems.length > 0) {
+            filteredItems.forEach((item) =>
+              renderItem(item, searchResultsContent)
+            );
+          } else {
             searchResultsContent.innerHTML =
-              "<p>Error filtering content. Please try again later or check console for details.</p>";
+              "<p>No results found or error occurred. Check console.</p>";
           }
+          clearButton.classList.add("active");
+          console.log(
+            "Filtered items count from fallback:",
+            filteredItems.length
+          ); // Debug log
         });
     } else {
       Promise.all([
