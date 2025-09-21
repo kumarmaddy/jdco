@@ -45,7 +45,12 @@
           <div class="resources-header">
             <h2>Resources & Insights</h2>
             <div class="filter-container">
-              <div id="tag-filter" class="tag-filter"></div>
+              <div class="tag-filter-wrapper">
+                <select id="tag-filter" multiple>
+                  <option value="">All Tags</option>
+                </select>
+                <button class="clear-tags" aria-label="Clear tags">×</button>
+              </div>
               <div class="search-wrapper">
                 <input
                   type="text"

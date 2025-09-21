@@ -5,10 +5,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const popupContent = document.getElementById("popup-content");
   let allItems = [];
   let allTags = [];
-  let selectedTags = new Set();
   const searchInput = document.getElementById("search-input");
   const tagFilter = document.getElementById("tag-filter");
   const clearSearch = document.querySelector(".clear-search");
+  const clearTags = document.querySelector(".clear-tags");
   const allResults = document.getElementById("all-results");
   const searchResultsContent = document.getElementById(
     "search-results-content"
@@ -42,23 +42,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const loadContent = async () => {
     try {
       const [updates, knowledgeArticles, downloads] = await Promise.all([
-        fetch("data/updates.json").then((res) => {
-          if (!res.ok)
-            throw new Error(`Failed to fetch updates.json: ${res.status}`);
-          return res.json();
-        }),
-        fetch("data/knowledge-articles.json").then((res) => {
-          if (!res.ok)
-            throw new Error(
-              `Failed to fetch knowledge-articles.json: ${res.status}`
-            );
-          return res.json();
-        }),
-        fetch("data/downloads.json").then((res) => {
-          if (!res.ok)
-            throw new Error(`Failed to fetch downloads.json: ${res.status}`);
-          return res.json();
-        }),
+        fetch("data/updates.json").then((res) => res.json()),
+        fetch("data/knowledge-articles.json").then((res) => res.json()),
+        fetch("data/downloads.json").then((res) => res.json()),
       ]);
 
       console.log("Loaded updates:", updates);
@@ -84,25 +70,9 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("All tags:", allTags);
 
       // Populate tag filter
-      tagFilter.innerHTML = allTags
-        .map((tag) => `<span class="tag" data-tag="${tag}">${tag}</span>`)
-        .join("");
-      tagFilter.querySelectorAll(".tag").forEach((tag) => {
-        tag.addEventListener("click", () => {
-          const isSelected = tag.getAttribute("data-selected") === "true";
-          tag.setAttribute("data-selected", !isSelected);
-          if (isSelected) selectedTags.delete(tag.dataset.tag);
-          else selectedTags.add(tag.dataset.tag);
-          filterContent();
-        });
-      });
-
-      // Initial render
-      renderContent(
-        sortItems(updates),
-        sortItems(knowledgeArticles),
-        sortItems(downloads)
-      );
+      tagFilter.innerHTML =
+        '<option value="">All Tags</option>' +
+        allTags.map((tag) => `<option value="${tag}">${tag}</option>`).join("");
     } catch (error) {
       console.error("Error loading content:", error);
       document.getElementById("updates-content").innerHTML =
@@ -267,7 +237,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Filter and sort all items by relevance
   const filterAndSortAllItems = () => {
     const searchText = searchInput.value.toLowerCase();
-    const tagsArray = Array.from(selectedTags);
+    const selectedTags = Array.from(tagFilter.selectedOptions)
+      .map((option) => option.value)
+      .filter((v) => v !== "");
 
     return allItems
       .filter((item) => {
@@ -282,8 +254,8 @@ document.addEventListener("DOMContentLoaded", () => {
           titleText.includes(searchText) ||
           contentText.includes(searchText);
         const matchesTags =
-          tagsArray.length === 0 ||
-          tagsArray.some((tag) => (item.tags || []).includes(tag));
+          selectedTags.length === 0 ||
+          selectedTags.some((tag) => (item.tags || []).includes(tag));
         return matchesSearch && matchesTags;
       })
       .map((item) => {
@@ -297,7 +269,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (titleText.includes(searchText)) score += 3;
         if (contentText.includes(searchText)) score += 2;
         (item.tags || []).forEach((tag) => {
-          if (tagsArray.includes(tag.toLowerCase())) score += 1;
+          if (selectedTags.includes(tag)) score += 1;
         });
         return { ...item, relevanceScore: score };
       })
@@ -312,32 +284,24 @@ document.addEventListener("DOMContentLoaded", () => {
   // Filter content
   const filterContent = () => {
     const searchText = searchInput.value.trim();
-    const hasFilter = searchText !== "" || selectedTags.size > 0;
+    const selectedTags = Array.from(tagFilter.selectedOptions)
+      .map((option) => option.value)
+      .filter((v) => v !== "");
+    const hasFilter = searchText !== "" || selectedTags.length > 0;
 
     if (hasFilter) {
       renderContent([], [], [], true);
     } else {
-      Promise.all([
-        fetch("data/updates.json").then((res) => res.json()),
-        fetch("data/knowledge-articles.json").then((res) => res.json()),
-        fetch("data/downloads.json").then((res) => res.json()),
-      ])
-        .then(([updates, knowledgeArticles, downloads]) => {
-          renderContent(
-            sortItems(updates),
-            sortItems(knowledgeArticles),
-            sortItems(downloads)
-          );
-        })
-        .catch((error) => {
-          console.error("Error filtering content:", error);
-          document.getElementById("updates-content").innerHTML =
-            "<p>Error filtering content. Please try again later.</p>";
-          document.getElementById("knowledge-articles-content").innerHTML =
-            "<p>Error filtering content. Please try again later.</p>";
-          document.getElementById("downloads-content").innerHTML =
-            "<p>Error filtering content. Please try again later.</p>";
-        });
+      const updates = allItems.filter((item) => item.section === "updates");
+      const knowledgeArticles = allItems.filter(
+        (item) => item.section === "knowledge-articles"
+      );
+      const downloads = allItems.filter((item) => item.section === "downloads");
+      renderContent(
+        sortItems(updates),
+        sortItems(knowledgeArticles),
+        sortItems(downloads)
+      );
     }
   };
 
@@ -350,22 +314,25 @@ document.addEventListener("DOMContentLoaded", () => {
         tab.classList.add("active");
         const tabId = tab.getAttribute("data-tab");
         document.getElementById(tabId).classList.add("active");
-        filterContent();
+        const sectionItems = allItems.filter((item) => item.section === tabId);
+        renderContent(
+          tabId === "updates" ? sortItems(sectionItems) : [],
+          tabId === "knowledge-articles" ? sortItems(sectionItems) : [],
+          tabId === "downloads" ? sortItems(sectionItems) : []
+        );
       }
     });
   });
 
-  // Event listeners for filter inputs and clear button
+  // Event listeners for filter inputs and clear buttons
   searchInput.addEventListener("input", filterContent);
-  tagFilter.addEventListener("click", (e) => {
-    if (e.target.classList.contains("tag")) filterContent();
-  });
+  tagFilter.addEventListener("change", filterContent);
   clearSearch.addEventListener("click", () => {
     searchInput.value = "";
-    selectedTags.clear();
-    tagFilter
-      .querySelectorAll(".tag")
-      .forEach((tag) => tag.removeAttribute("data-selected"));
+    filterContent();
+  });
+  clearTags.addEventListener("click", () => {
+    tagFilter.selectedIndex = 0;
     filterContent();
   });
 
