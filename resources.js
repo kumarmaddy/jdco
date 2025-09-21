@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ...downloads.map((item) => ({ ...item, section: "downloads" })),
       ];
 
-      console.log("All items:", allItems);
+      console.log("All items populated:", allItems.length); // Debug log
 
       allTags = [
         ...new Set(allItems.flatMap((item) => item.tags || [])),
@@ -226,8 +226,8 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     if (isSearch) {
-      const filteredItems = filterItems(allItems.length > 0 ? allItems : []);
-      console.log("Filtered items:", filteredItems); // Debug log
+      const filteredItems = filterItems(allItems);
+      console.log("Filtered items count:", filteredItems.length); // Debug log
       filteredItems.forEach((item) => renderItem(item, searchResultsContent));
       if (filteredItems.length === 0) {
         searchResultsContent.innerHTML = "<p>No results found.</p>";
@@ -292,7 +292,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Filter content by search and tag
   const filterContent = () => {
-    const searchText = searchInput.value.trim();
+    const searchText = searchInput.value.trim().toLowerCase();
     const selectedTag = tagSelect.value;
 
     // Mutual exclusivity
@@ -336,85 +336,24 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     if (searchText || selectedTag) {
-      // Try fetching fresh data, fall back to allItems if it fails
-      Promise.all([
-        fetch("data/updates.json").then((res) => {
-          if (!res.ok)
-            throw new Error(
-              `HTTP error! status: ${res.status} for updates.json`
-            );
-          return res.json();
-        }),
-        fetch("data/knowledge-articles.json").then((res) => {
-          if (!res.ok)
-            throw new Error(
-              `HTTP error! status: ${res.status} for knowledge-articles.json`
-            );
-          return res.json();
-        }),
-        fetch("data/downloads.json").then((res) => {
-          if (!res.ok)
-            throw new Error(
-              `HTTP error! status: ${res.status} for downloads.json`
-            );
-          return res.json();
-        }),
-      ])
-        .then(([updates, knowledgeArticles, downloads]) => {
-          const allData = [...updates, ...knowledgeArticles, ...downloads];
-          renderContent(
-            sortItems(updates),
-            sortItems(knowledgeArticles),
-            sortItems(downloads),
-            true
-          );
-          const searchResultsContent = document.getElementById(
-            "search-results-content"
-          );
-          const filteredItems = filterItems(allData);
-          searchResultsContent.innerHTML = ""; // Clear to prevent duplication
-          if (filteredItems.length > 0) {
-            filteredItems.forEach((item) =>
-              renderItem(item, searchResultsContent)
-            );
-          } else {
-            searchResultsContent.innerHTML = "<p>No results found.</p>";
-          }
-          clearButton.classList.add("active");
-          console.log("Filtered items count from fetch:", filteredItems.length); // Debug log
-        })
-        .catch((error) => {
-          console.error(
-            "Error fetching fresh data, falling back to allItems:",
-            error
-          );
-          renderContent(
-            sortItems(allItems.filter((i) => i.section === "updates")),
-            sortItems(
-              allItems.filter((i) => i.section === "knowledge-articles")
-            ),
-            sortItems(allItems.filter((i) => i.section === "downloads")),
-            true
-          );
-          const searchResultsContent = document.getElementById(
-            "search-results-content"
-          );
-          const filteredItems = filterItems(allItems);
-          searchResultsContent.innerHTML = ""; // Clear to prevent duplication
-          if (filteredItems.length > 0) {
-            filteredItems.forEach((item) =>
-              renderItem(item, searchResultsContent)
-            );
-          } else {
-            searchResultsContent.innerHTML =
-              "<p>No results found or error occurred. Check console.</p>";
-          }
-          clearButton.classList.add("active");
-          console.log(
-            "Filtered items count from fallback:",
-            filteredItems.length
-          ); // Debug log
-        });
+      renderContent(
+        sortItems(allItems.filter((i) => i.section === "updates")),
+        sortItems(allItems.filter((i) => i.section === "knowledge-articles")),
+        sortItems(allItems.filter((i) => i.section === "downloads")),
+        true
+      );
+      const searchResultsContent = document.getElementById(
+        "search-results-content"
+      );
+      const filteredItems = filterItems(allItems);
+      searchResultsContent.innerHTML = ""; // Clear to prevent duplication
+      if (filteredItems.length > 0) {
+        filteredItems.forEach((item) => renderItem(item, searchResultsContent));
+      } else {
+        searchResultsContent.innerHTML = "<p>No results found.</p>";
+      }
+      clearButton.classList.add("active");
+      console.log("Filtered items count:", filteredItems.length); // Debug log
     } else {
       Promise.all([
         fetch("data/updates.json").then((res) => res.json()),
