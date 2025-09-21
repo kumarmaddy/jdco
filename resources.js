@@ -227,12 +227,14 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     } else {
       contents.forEach((content) => content.classList.remove("active"));
-      tabs.forEach((tab) => tab.classList.remove("disabled"));
+      tabs.forEach((tab) => {
+        tab.classList.remove("disabled"); // Re-enable tabs when not in search mode
+        if (!document.querySelector(".resource-tab.active"))
+          tab.classList.add("active"); // Ensure one tab is active
+      });
       const activeTab = document.querySelector(".resource-tab.active");
       if (!activeTab) tabs[0].classList.add("active"); // Default to Updates
-      const activeTabId = document
-        .querySelector(".resource-tab.active")
-        ?.getAttribute("data-tab");
+      const activeTabId = activeTab?.getAttribute("data-tab");
       if (activeTabId === "updates")
         document.getElementById("updates").classList.add("active");
       else if (activeTabId === "knowledge-articles")
@@ -390,6 +392,49 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   };
 
+  // Clear filters and revert to active tab content
+  const clearFilters = () => {
+    searchInput.value = "";
+    tagSelect.value = "";
+    searchInput.disabled = false;
+    tagSelect.disabled = false;
+    clearButton.classList.remove("active");
+
+    const activeTab = document.querySelector(".resource-tab.active");
+    const tabId = activeTab?.getAttribute("data-tab") || "updates";
+
+    Promise.all([
+      fetch("data/updates.json").then((res) => res.json()),
+      fetch("data/knowledge-articles.json").then((res) => res.json()),
+      fetch("data/downloads.json").then((res) => res.json()),
+    ])
+      .then(([updates, knowledgeArticles, downloads]) => {
+        const sortItems = (items) => {
+          const pinned = items
+            .filter((item) => item.pinned)
+            .sort((a, b) => new Date(b.date) - new Date(a.date));
+          const nonPinned = items
+            .filter((item) => !item.pinned)
+            .sort((a, b) => new Date(b.date) - new Date(a.date));
+          return [...pinned, ...nonPinned];
+        };
+        if (tabId === "updates") renderContent(sortItems(updates), [], []);
+        else if (tabId === "knowledge-articles")
+          renderContent([], sortItems(knowledgeArticles), []);
+        else if (tabId === "downloads")
+          renderContent([], [], sortItems(downloads));
+      })
+      .catch((error) => {
+        console.error("Error loading content:", error);
+        document.getElementById("updates-content").innerHTML =
+          "<p>Error loading content. Please try again later.</p>";
+        document.getElementById("knowledge-articles-content").innerHTML =
+          "<p>Error loading content. Please try again later.</p>";
+        document.getElementById("downloads-content").innerHTML =
+          "<p>Error loading content. Please try again later.</p>";
+      });
+  };
+
   // Sidebar navigation
   tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
@@ -419,13 +464,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const clearButton = document.createElement("button");
   clearButton.textContent = "Clear";
   clearButton.classList.add("clear-button");
-  clearButton.addEventListener("click", () => {
-    searchInput.value = "";
-    tagSelect.value = "";
-    searchInput.disabled = false;
-    tagSelect.disabled = false;
-    filterContent();
-  });
+  clearButton.addEventListener("click", clearFilters);
   searchWrapper.appendChild(clearButton);
 
   // Event listeners for filter inputs
