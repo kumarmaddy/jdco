@@ -130,22 +130,20 @@ document.addEventListener("DOMContentLoaded", () => {
     if (isSearch) {
       contents.forEach((content) => content.classList.remove("active"));
       tabs.forEach((tab) => tab.classList.remove("active", "disabled"));
-      const searchResults = document.getElementById("search-results");
+      let searchResults = document.getElementById("search-results");
       if (!searchResults) {
-        const newSearchResults = document.createElement("div");
-        newSearchResults.classList.add("resource-details", "active");
-        newSearchResults.id = "search-results";
-        newSearchResults.innerHTML =
+        searchResults = document.createElement("div");
+        searchResults.classList.add("resource-details", "active");
+        searchResults.id = "search-results";
+        searchResults.innerHTML =
           "<h3>Search Results</h3><p>Results across all sections.</p>";
         searchResultsContent = document.createElement("div");
         searchResultsContent.id = "search-results-content";
-        newSearchResults.appendChild(searchResultsContent);
-        document
-          .querySelector(".resources-content")
-          .appendChild(newSearchResults);
+        searchResults.appendChild(searchResultsContent);
+        document.querySelector(".resources-content").appendChild(searchResults);
       } else {
         searchResults.classList.add("active");
-        searchResultsContent.innerHTML = ""; // Clear previous results
+        searchResultsContent.innerHTML = ""; // Clear to prevent duplication
       }
     } else {
       contents.forEach((content) => content.classList.remove("active"));
@@ -303,10 +301,7 @@ document.addEventListener("DOMContentLoaded", () => {
         searchText.every((keyword) => textContent.includes(keyword));
       const matchesTag =
         !selectedTag || (item.tags || []).includes(selectedTag);
-      return (
-        (searchText.length ? matchesSearch : true) &&
-        (selectedTag ? matchesTag : true)
-      );
+      return matchesSearch && matchesTag;
     });
   };
 
@@ -370,15 +365,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (hasFilter) {
-      const filteredItems = sortItems(filterItems(allItems), !!selectedTag);
       renderContent([], [], [], true);
       const searchResultsContent = document.getElementById(
         "search-results-content"
       );
-      searchResultsContent.innerHTML = ""; // Ensure no duplication
+      searchResultsContent.innerHTML = ""; // Clear to prevent duplication
+      const filteredItems = sortItems(filterItems(allItems), !!selectedTag);
       filteredItems.forEach((item) => renderItem(item, searchResultsContent));
       clearButton.classList.add("active");
-      console.log("Clear button activated:", clearButton.classList);
+      console.log("Clear button activated, classes:", clearButton.classList);
     } else {
       Promise.all([
         fetch("data/updates.json").then((res) => {
@@ -415,7 +410,10 @@ document.addEventListener("DOMContentLoaded", () => {
             sortItems(downloads)
           );
           clearButton.classList.remove("active");
-          console.log("Clear button deactivated:", clearButton.classList);
+          console.log(
+            "Clear button deactivated, classes:",
+            clearButton.classList
+          );
         })
         .catch((error) => {
           console.error("Error loading content:", error);
