@@ -19,11 +19,9 @@
   <body>
     <header class="sticky-header">
       <div class="container">
-        <div class="logo">
-          <a href="index.html">
-            <h1>Jayadeva & Co.</h1>
-            <p>Tax | Assurance | Advisory</p>
-          </a>
+        <div class="logo" onclick="window.location.href='index.html';">
+          <h1>Jayadeva & Co.</h1>
+          <p>Tax | Assurance | Advisory</p>
         </div>
         <nav>
           <button class="hamburger" aria-label="Toggle navigation">
@@ -48,17 +46,21 @@
             <h2>Resources & Insights</h2>
             <div class="filter-container">
               <div id="tag-filter" class="tag-filter"></div>
-              <input
-                type="text"
-                id="search-input"
-                placeholder="Search by keyword or tag..."
-                aria-label="Search resources"
-              />
+              <div class="search-wrapper">
+                <input
+                  type="text"
+                  id="search-input"
+                  placeholder="Search by keyword or tag..."
+                  aria-label="Search resources"
+                />
+                <button class="clear-search" aria-label="Clear search">
+                  ×
+                </button>
+              </div>
             </div>
           </div>
           <div class="resources-main">
             <div class="resources-sidebar">
-              <h3>Sections</h3>
               <ul class="resources-menu">
                 <li>
                   <button class="resource-tab active" data-tab="updates">
@@ -87,7 +89,10 @@
               <div id="downloads" class="resource-details">
                 <div id="downloads-content"></div>
               </div>
-              <div id="all-results" class="resource-details"></div>
+              <div id="all-results" class="resource-details">
+                <h3>Search Results</h3>
+                <div id="search-results-content"></div>
+              </div>
             </div>
           </div>
           <div class="popup" id="resource-popup">
