@@ -33,11 +33,8 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   }
 
-  // Move filterItems to global scope
-  const filterItems = (items) => {
-    const searchText = searchInput.value.trim().toLowerCase();
-    const selectedTag = tagSelect.value;
-
+  // Filter items based on search text and tag
+  function filterItems(items, searchText, selectedTag) {
     return items.filter((item) => {
       const textContent =
         (item.title || "").toLowerCase() +
@@ -52,24 +49,13 @@ document.addEventListener("DOMContentLoaded", () => {
         !selectedTag || (item.tags || []).includes(selectedTag);
       console.log(
         `Item: ${item.title}, Matches Search: ${matchesSearch}, Matches Tag: ${matchesTag}`
-      );
+      ); // Debug log
       return matchesSearch && matchesTag;
     });
-  };
+  }
 
-  // Move sortItems to global scope
-  const sortItems = (items) => {
-    const pinned = items
-      .filter((item) => item.pinned)
-      .sort((a, b) => new Date(b.date) - new Date(a.date));
-    const nonPinned = items
-      .filter((item) => !item.pinned)
-      .sort((a, b) => new Date(b.date) - new Date(a.date));
-    return [...pinned, ...nonPinned];
-  };
-
-  // Move renderItem to global scope
-  const renderItem = (item, container) => {
+  // Render a single item
+  function renderItem(item, container) {
     const div = document.createElement("div");
     div.classList.add("resource-item");
     div.dataset.id = `${item.section}-${item.title}`;
@@ -118,7 +104,18 @@ document.addEventListener("DOMContentLoaded", () => {
       .querySelector(".expand-icon")
       ?.addEventListener("click", () => showPopup(item));
     container.appendChild(div);
-  };
+  }
+
+  // Sort items
+  function sortItems(items) {
+    const pinned = items
+      .filter((item) => item.pinned)
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
+    const nonPinned = items
+      .filter((item) => !item.pinned)
+      .sort((a, b) => new Date(b.date) - new Date(a.date));
+    return [...pinned, ...nonPinned];
+  }
 
   // Load content from JSON files
   const loadContent = async () => {
@@ -160,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ...downloads.map((item) => ({ ...item, section: "downloads" })),
       ];
 
-      console.log("All items populated:", allItems.length);
+      console.log("All items populated:", allItems.length); // Debug log
 
       allTags = [
         ...new Set(allItems.flatMap((item) => item.tags || [])),
@@ -226,13 +223,13 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelector(".resources-content").appendChild(searchResults);
       } else {
         searchResults.classList.add("active");
-        searchResultsContent.innerHTML = "";
+        searchResultsContent.innerHTML = ""; // Clear to prevent duplication
       }
     } else {
       contents.forEach((content) => content.classList.remove("active"));
       tabs.forEach((tab) => tab.classList.remove("disabled"));
       const activeTab = document.querySelector(".resource-tab.active");
-      if (!activeTab) tabs[0].classList.add("active");
+      if (!activeTab) tabs[0].classList.add("active"); // Default to Updates
       const activeTabId = document
         .querySelector(".resource-tab.active")
         ?.getAttribute("data-tab");
@@ -252,10 +249,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (isSearch) {
-      const filteredItems = filterItems(allItems);
-      console.log("Filtered items count:", filteredItems.length);
-      filteredItems.forEach((item) => renderItem(item, searchResultsContent));
-      if (filteredItems.length === 0) {
+      const filteredItems = filterItems(
+        [...updates, ...knowledgeArticles, ...downloads],
+        searchInput.value.trim().toLowerCase(),
+        tagSelect.value
+      );
+      console.log("Filtered items count:", filteredItems.length); // Debug log
+      if (filteredItems.length > 0) {
+        filteredItems.forEach((item) => renderItem(item, searchResultsContent));
+      } else {
         searchResultsContent.innerHTML = "<p>No results found.</p>";
       }
     } else {
@@ -316,7 +318,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Filter content by search and tag - SIMPLIFIED VERSION
+  // Filter content by search and tag
   const filterContent = () => {
     const searchText = searchInput.value.trim().toLowerCase();
     const selectedTag = tagSelect.value;
@@ -331,29 +333,44 @@ document.addEventListener("DOMContentLoaded", () => {
       searchInput.disabled = false;
     }
 
-    if (searchText || selectedTag) {
-      // Show search results
-      renderContent([], [], [], true);
-      clearButton.classList.add("active");
-    } else {
-      // Show normal content
-      Promise.all([
-        fetch("data/updates.json").then((res) => res.json()),
-        fetch("data/knowledge-articles.json").then((res) => res.json()),
-        fetch("data/downloads.json").then((res) => res.json()),
-      ])
-        .then(([updates, knowledgeArticles, downloads]) => {
-          renderContent(
-            sortItems(updates),
-            sortItems(knowledgeArticles),
-            sortItems(downloads)
+    Promise.all([
+      fetch("data/updates.json").then((res) => res.json()),
+      fetch("data/knowledge-articles.json").then((res) => res.json()),
+      fetch("data/downloads.json").then((res) => res.json()),
+    ])
+      .then(([updates, knowledgeArticles, downloads]) => {
+        renderContent(
+          sortItems(updates),
+          sortItems(knowledgeArticles),
+          sortItems(downloads),
+          true
+        );
+        const searchResultsContent = document.getElementById(
+          "search-results-content"
+        );
+        const allData = [...updates, ...knowledgeArticles, ...downloads];
+        const filteredItems = filterItems(allData, searchText, selectedTag);
+        searchResultsContent.innerHTML = ""; // Clear to prevent duplication
+        if (filteredItems.length > 0) {
+          filteredItems.forEach((item) =>
+            renderItem(item, searchResultsContent)
           );
-          clearButton.classList.remove("active");
-        })
-        .catch((error) => {
-          console.error("Error loading content:", error);
-        });
-    }
+        } else {
+          searchResultsContent.innerHTML = "<p>No results found.</p>";
+        }
+        clearButton.classList.add("active");
+        console.log("Filtered items count:", filteredItems.length); // Debug log
+      })
+      .catch((error) => {
+        console.error("Error filtering content:", error);
+        const searchResultsContent = document.getElementById(
+          "search-results-content"
+        );
+        if (searchResultsContent) {
+          searchResultsContent.innerHTML =
+            "<p>Error filtering content. Please try again later or check console for details.</p>";
+        }
+      });
   };
 
   // Sidebar navigation
@@ -371,6 +388,15 @@ document.addEventListener("DOMContentLoaded", () => {
           fetch("data/knowledge-articles.json").then((res) => res.json()),
           fetch("data/downloads.json").then((res) => res.json()),
         ]).then(([updates, knowledgeArticles, downloads]) => {
+          const sortItems = (items) => {
+            const pinned = items
+              .filter((item) => item.pinned)
+              .sort((a, b) => new Date(b.date) - new Date(a.date));
+            const nonPinned = items
+              .filter((item) => !item.pinned)
+              .sort((a, b) => new Date(b.date) - new Date(a.date));
+            return [...pinned, ...nonPinned];
+          };
           if (tabId === "updates") renderContent(sortItems(updates), [], []);
           else if (tabId === "knowledge-articles")
             renderContent([], sortItems(knowledgeArticles), []);
