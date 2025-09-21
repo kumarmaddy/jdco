@@ -22,45 +22,23 @@
 
 .filter-container {
   display: flex;
-  flex-direction: column;
   gap: 10px;
-  align-items: stretch;
-  width: 100%;
+  align-items: center;
 }
 
 #tag-select {
   padding: 10px;
   font-size: 16px;
   border: 1px solid #ccc; /* Retain borders on all sides */
-  border-radius: 0; /* Reset to default, we'll handle rounding differently */
+  border-radius: 5px; /* Reinforce rounded corners with vendor prefixes */
+  -webkit-border-radius: 5px; /* Safari/Chrome */
+  -moz-border-radius: 5px; /* Firefox */
   background-color: #fff;
   cursor: pointer;
-  width: 100%;
+  width: auto;
   min-width: 150px;
   max-height: 200px; /* Retain scrollable height */
   overflow-y: auto; /* Ensure scrollability for >12 tags */
-  box-sizing: border-box; /* Ensure padding doesn't affect width */
-  appearance: none; /* Remove default styling for better control */
-  -webkit-appearance: none; /* Safari/Chrome */
-  -moz-appearance: none; /* Firefox */
-  position: relative;
-}
-
-.filter-wrapper {
-  position: relative;
-  border-radius: 5px; /* Apply rounded corners to wrapper */
-  overflow: hidden; /* Ensure dropdown respects rounded corners */
-}
-
-.filter-wrapper::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: 30px;
-  background: linear-gradient(to right, rgba(255, 255, 255, 0), #fff);
-  pointer-events: none; /* Prevent interference with click */
 }
 
 #search-input {
@@ -68,8 +46,7 @@
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  width: 100%;
-  box-sizing: border-box; /* Ensure padding doesn't affect width */
+  width: 250px;
 }
 
 .resources-main {
@@ -338,18 +315,15 @@
 
   .filter-container {
     flex-direction: column;
-    align-items: stretch; /* Ensure natural alignment */
+    align-items: stretch;
     width: 100%;
   }
 
-  #tag-select {
-    width: 100%; /* Match widths on mobile */
-    max-width: 100%; /* Prevent stretching beyond screen */
-  }
-
+  #tag-select,
   #search-input {
     width: 100%; /* Match widths on mobile */
     max-width: 100%; /* Prevent stretching beyond screen */
+    box-sizing: border-box; /* Include padding in width calculation */
   }
 
   .clear-button {
@@ -358,7 +332,8 @@
     box-sizing: border-box; /* Include padding in width calculation */
     text-align: center; /* Center the button text */
     margin: 10px auto 0; /* Center with auto margins */
-    display: block; /* Ensure block-level centering */
+    display: flex;
+    justify-content: center; /* Ensure equal space distribution */
   }
 
   .resources-main {
