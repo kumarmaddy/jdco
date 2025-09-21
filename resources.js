@@ -223,6 +223,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (isSearch) {
       const filteredItems = filterItems(allItems);
+      console.log("Filtered items:", filteredItems); // Debug log
       filteredItems.forEach((item) => renderItem(item, searchResultsContent));
     } else {
       updates.forEach((item) => renderItem(item, updatesContent));
@@ -284,20 +285,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Filter content by search and tag
   const filterContent = () => {
-    const searchInput = document
-      .getElementById("search-input")
-      .value.toLowerCase();
-    const selectedTag = document.getElementById("tag-select").value;
+    const searchText = searchInput.value.trim();
+    const selectedTag = tagSelect.value;
+
+    // Mutual exclusivity
+    if (searchText) {
+      tagSelect.disabled = true;
+    } else if (selectedTag) {
+      searchInput.disabled = true;
+    } else {
+      tagSelect.disabled = false;
+      searchInput.disabled = false;
+    }
 
     const filterItems = (items) => {
       return items.filter((item) => {
         const matchesSearch =
-          !searchInput ||
-          (item.title || "").toLowerCase().includes(searchInput) ||
-          (item.content || "").toLowerCase().includes(searchInput) ||
-          (item.description || "").toLowerCase().includes(searchInput) ||
+          !searchText ||
+          (item.title || "").toLowerCase().includes(searchText) ||
+          (item.content || "").toLowerCase().includes(searchText) ||
+          (item.description || "").toLowerCase().includes(searchText) ||
           (item.tags || []).some((tag) =>
-            tag.toLowerCase().includes(searchInput)
+            tag.toLowerCase().includes(searchText)
           );
         const matchesTag =
           !selectedTag || (item.tags || []).includes(selectedTag);
@@ -321,7 +330,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return [...pinned, ...nonPinned];
     };
 
-    if (searchInput || selectedTag) {
+    if (searchText || selectedTag) {
       Promise.all([
         fetch("data/updates.json").then((res) => res.json()),
         fetch("data/knowledge-articles.json").then((res) => res.json()),
@@ -344,10 +353,7 @@ document.addEventListener("DOMContentLoaded", () => {
             renderItem(item, searchResultsContent)
           );
           clearButton.classList.add("active");
-          console.log(
-            "Clear button activated, classes:",
-            clearButton.classList
-          );
+          console.log("Filtered items count:", filteredItems.length); // Debug log
         })
         .catch((error) => {
           console.error("Error filtering content:", error);
@@ -425,6 +431,8 @@ document.addEventListener("DOMContentLoaded", () => {
   clearButton.addEventListener("click", () => {
     searchInput.value = "";
     tagSelect.value = "";
+    searchInput.disabled = false;
+    tagSelect.disabled = false;
     filterContent();
   });
   searchWrapper.appendChild(clearButton);
