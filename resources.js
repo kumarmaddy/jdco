@@ -9,10 +9,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const tagFilter = document.getElementById("tag-filter");
   const clearSearch = document.querySelector(".clear-search");
   const clearTags = document.querySelector(".clear-tags");
+  const searchIcon = document.createElement("span");
+  searchIcon.className = "material-icons search-icon";
+  searchIcon.textContent = "search";
   const allResults = document.getElementById("all-results");
   const searchResultsContent = document.getElementById(
     "search-results-content"
   );
+  const searchWrapper = document.querySelector(".search-wrapper");
+  const tagFilterWrapper = document.querySelector(".tag-filter-wrapper");
 
   // Configure showdown.js for markdown parsing
   if (typeof showdown !== "undefined") {
@@ -73,6 +78,16 @@ document.addEventListener("DOMContentLoaded", () => {
       tagFilter.innerHTML =
         '<option value="">All Tags</option>' +
         allTags.map((tag) => `<option value="${tag}">${tag}</option>`).join("");
+      searchWrapper.appendChild(searchIcon);
+      tagFilterWrapper.appendChild(document.createElement("span")).className =
+        "material-icons filter-icon";
+      tagFilterWrapper.querySelector(".filter-icon").textContent =
+        "filter_list";
+      renderContent(
+        sortItems(updates),
+        sortItems(knowledgeArticles),
+        sortItems(downloads)
+      );
     } catch (error) {
       console.error("Error loading content:", error);
       document.getElementById("updates-content").innerHTML =
@@ -291,6 +306,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (hasFilter) {
       renderContent([], [], [], true);
+      clearSearch.style.display = searchText ? "flex" : "none";
+      searchIcon.style.display = searchText ? "none" : "flex";
     } else {
       const updates = allItems.filter((item) => item.section === "updates");
       const knowledgeArticles = allItems.filter(
@@ -302,6 +319,10 @@ document.addEventListener("DOMContentLoaded", () => {
         sortItems(knowledgeArticles),
         sortItems(downloads)
       );
+      clearSearch.style.display = "none";
+      searchIcon.style.display = "flex";
+      clearTags.style.display = "none";
+      tagFilterWrapper.querySelector(".filter-icon").style.display = "flex";
     }
   };
 
@@ -326,7 +347,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Event listeners for filter inputs and clear buttons
   searchInput.addEventListener("input", filterContent);
-  tagFilter.addEventListener("change", filterContent);
+  tagFilter.addEventListener("change", () => {
+    filterContent();
+    clearTags.style.display =
+      tagFilter.selectedOptions.length > 1 ||
+      (tagFilter.selectedOptions.length === 1 &&
+        tagFilter.selectedOptions[0].value !== "")
+        ? "flex"
+        : "none";
+    tagFilterWrapper.querySelector(".filter-icon").style.display =
+      tagFilter.selectedOptions.length > 1 ||
+      (tagFilter.selectedOptions.length === 1 &&
+        tagFilter.selectedOptions[0].value !== "")
+        ? "none"
+        : "flex";
+  });
   clearSearch.addEventListener("click", () => {
     searchInput.value = "";
     filterContent();

@@ -1,47 +1,30 @@
+/* Assuming contact.css exists or aligns with other pages */
 .contact-container {
-  padding: 40px 20px;
-  background-color: #f5f5f5;
-  border-radius: 5px;
+  padding: 40px 0;
+}
+
+.contact-header {
   text-align: center;
+  margin-bottom: 20px;
 }
 
-.contact-container h2 {
+.contact-header h2 {
   font-size: 28px;
-  margin-bottom: 20px;
-}
-
-.contact-info {
-  margin-bottom: 20px;
-}
-
-.contact-info p {
-  font-size: 16px;
-  margin: 10px 0;
-}
-
-.contact-info a {
-  color: #1a73e8;
-  text-decoration: underline;
-}
-
-.contact-info a:hover {
-  color: #134c9e;
+  margin: 0;
 }
 
 .contact-form {
-  max-width: 500px;
+  max-width: 600px;
   margin: 0 auto;
-  background-color: #fff;
   padding: 20px;
+  background-color: #f5f5f5;
   border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .contact-form label {
   display: block;
-  font-size: 16px;
   margin-bottom: 5px;
-  text-align: left;
+  font-size: 16px;
 }
 
 .contact-form input,
@@ -55,56 +38,47 @@
 }
 
 .contact-form button {
+  padding: 10px 20px;
   background-color: #000;
   color: #fff;
-  padding: 10px 20px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 16px;
 }
 
 .contact-form button:hover {
   background-color: #333;
 }
 
-.map {
-  margin-top: 20px;
+.contact-info {
+  max-width: 600px;
+  margin: 20px auto;
+  text-align: center;
 }
 
-.map img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-  margin: 0 auto;
+.contact-info p {
+  font-size: 16px;
+  margin-bottom: 10px;
 }
 
-@media (min-width: 769px) {
-  .contact-container {
-    max-width: 80%;
-    margin: 0 auto;
-    padding: 40px;
-  }
+.sticky-header .logo {
+  text-align: left;
+  padding: 10px 0;
+}
 
-  .contact-form {
-    max-width: 600px;
-  }
+.sticky-header .logo h1 {
+  margin: 0;
+  font-size: 24px;
+}
 
-  .map img {
-    max-width: 80%;
-  }
+.sticky-header .logo p {
+  margin: 0;
+  font-size: 14px;
 }
 
 @media (max-width: 768px) {
-  .contact-container {
-    padding: 20px;
-  }
-
-  .contact-form {
-    max-width: 100%;
-  }
-
-  .map img {
-    max-width: 100%;
+  .contact-form,
+  .contact-info {
+    padding: 15px;
   }
 }
