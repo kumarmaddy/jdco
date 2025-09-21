@@ -39,6 +39,20 @@
   min-width: 150px;
   max-height: 200px; /* Retain scrollable height */
   overflow-y: auto; /* Ensure scrollability for >12 tags */
+  /* [NEW] Added from your code: Style options for better dropdown appearance */
+  /* [NEW] Note: Option styling may not affect dropdown container due to browser limitations */
+  /* [NEW] Added from your code: Attempt to remove default appearance for better control */
+  -webkit-appearance: none; /* Safari/Chrome */
+  -moz-appearance: none; /* Firefox */
+  appearance: none;
+}
+
+#tag-select option {
+  /* [NEW] Added from your code: Style individual options with rounded corners */
+  border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  padding: 8px;
 }
 
 #search-input {
@@ -306,64 +320,6 @@
   color: #666;
 }
 
-@media (max-width: 768px) {
-  .resources-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
-  .filter-container {
-    flex-direction: column;
-    align-items: stretch;
-    width: 100%;
-  }
-
-  #tag-select,
-  #search-input {
-    width: 100%; /* Match widths on mobile */
-    max-width: 100%; /* Prevent stretching beyond screen */
-    box-sizing: border-box; /* Include padding in width calculation */
-  }
-
-  .clear-button {
-    width: 60%; /* Retain 60% width */
-    max-width: 60%; /* Prevent stretching beyond 60% */
-    box-sizing: border-box; /* Include padding in width calculation */
-    text-align: center; /* Center the button text */
-    margin: 10px auto 0; /* Center with auto margins */
-    display: flex;
-    justify-content: center; /* Ensure equal space distribution */
-  }
-
-  .resources-main {
-    flex-direction: column;
-  }
-
-  .resources-sidebar {
-    padding: 15px;
-  }
-
-  .resources-content {
-    padding: 15px;
-  }
-
-  .resource-details h3 {
-    font-size: 20px;
-  }
-
-  .popup-content {
-    width: 90%;
-    margin: 0 5%;
-    max-height: 90vh;
-  }
-
-  .resource-item .expand-icon,
-  .popup-content .close-button {
-    padding: 2px;
-  }
-}
-
 .clear-button {
   padding: 10px;
   font-size: 16px;
@@ -395,4 +351,85 @@
 
 #search-results.active {
   display: block;
+}
+
+@media (max-width: 768px) {
+  .resources-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .filter-container {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  #tag-select,
+  #search-input {
+    width: 100%; /* Match widths on mobile */
+    max-width: 100%; /* Prevent stretching beyond screen */
+    box-sizing: border-box; /* Include padding in width calculation */
+  }
+
+  /* [NEW] Added from your code: Enhanced mobile dropdown styling */
+  #tag-select {
+    -webkit-appearance: none; /* Safari/Chrome */
+    -moz-appearance: none; /* Firefox */
+    appearance: none;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+  }
+
+  /* [NEW] Added from your code: Style individual options for mobile */
+  #tag-select option {
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    padding: 10px;
+    background-color: #fff;
+    color: #333;
+  }
+
+  /* [NEW] Modified from your code: Fix clear button centering */
+  .clear-button {
+    width: 60%; /* Retain 60% width */
+    max-width: 60%; /* Prevent stretching beyond 60% */
+    box-sizing: border-box; /* Include padding in width calculation */
+    text-align: center; /* Center the button text */
+    margin: 10px auto 0; /* Center with auto margins */
+    margin-left: auto; /* Override desktop margin-left */
+    margin-right: auto; /* Ensure both sides are auto for centering */
+    display: block; /* Change from flex to block for better centering */
+    align-self: center; /* Additional centering for flexbox parent */
+  }
+
+  .resources-main {
+    flex-direction: column;
+  }
+
+  .resources-sidebar {
+    padding: 15px;
+  }
+
+  .resources-content {
+    padding: 15px;
+  }
+
+  .resource-details h3 {
+    font-size: 20px;
+  }
+
+  .popup-content {
+    width: 90%;
+    margin: 0 5%;
+    max-height: 90vh;
+  }
+
+  .resource-item .expand-icon,
+  .popup-content .close-button {
+    padding: 2px;
+  }
 }
