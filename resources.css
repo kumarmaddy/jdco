@@ -22,21 +22,45 @@
 
 .filter-container {
   display: flex;
+  flex-direction: column;
   gap: 10px;
-  align-items: center;
+  align-items: stretch;
+  width: 100%;
 }
 
 #tag-select {
   padding: 10px;
   font-size: 16px;
   border: 1px solid #ccc; /* Retain borders on all sides */
-  border-radius: 5px; /* Reinforce rounded corners */
+  border-radius: 0; /* Reset to default, we'll handle rounding differently */
   background-color: #fff;
   cursor: pointer;
-  width: auto;
+  width: 100%;
   min-width: 150px;
   max-height: 200px; /* Retain scrollable height */
   overflow-y: auto; /* Ensure scrollability for >12 tags */
+  box-sizing: border-box; /* Ensure padding doesn't affect width */
+  appearance: none; /* Remove default styling for better control */
+  -webkit-appearance: none; /* Safari/Chrome */
+  -moz-appearance: none; /* Firefox */
+  position: relative;
+}
+
+.filter-wrapper {
+  position: relative;
+  border-radius: 5px; /* Apply rounded corners to wrapper */
+  overflow: hidden; /* Ensure dropdown respects rounded corners */
+}
+
+.filter-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 30px;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), #fff);
+  pointer-events: none; /* Prevent interference with click */
 }
 
 #search-input {
@@ -44,7 +68,8 @@
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  width: 250px;
+  width: 100%;
+  box-sizing: border-box; /* Ensure padding doesn't affect width */
 }
 
 .resources-main {
@@ -313,23 +338,27 @@
 
   .filter-container {
     flex-direction: column;
-    align-items: stretch; /* Revert to stretch to align filter and search naturally */
+    align-items: stretch; /* Ensure natural alignment */
     width: 100%;
   }
 
-  #tag-select,
+  #tag-select {
+    width: 100%; /* Match widths on mobile */
+    max-width: 100%; /* Prevent stretching beyond screen */
+  }
+
   #search-input {
     width: 100%; /* Match widths on mobile */
     max-width: 100%; /* Prevent stretching beyond screen */
-    box-sizing: border-box; /* Include padding in width calculation */
   }
 
   .clear-button {
-    width: 60%; /* Set to 60% width */
+    width: 60%; /* Retain 60% width */
     max-width: 60%; /* Prevent stretching beyond 60% */
     box-sizing: border-box; /* Include padding in width calculation */
     text-align: center; /* Center the button text */
-    margin: 10px auto 0; /* Center the button with auto margins and add top spacing */
+    margin: 10px auto 0; /* Center with auto margins */
+    display: block; /* Ensure block-level centering */
   }
 
   .resources-main {
