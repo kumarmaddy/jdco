@@ -249,8 +249,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (isSearch) {
+      const allData = [...updates, ...knowledgeArticles, ...downloads];
       const filteredItems = filterItems(
-        [...updates, ...knowledgeArticles, ...downloads],
+        allData,
         searchInput.value.trim().toLowerCase(),
         tagSelect.value
       );
@@ -334,9 +335,25 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     Promise.all([
-      fetch("data/updates.json").then((res) => res.json()),
-      fetch("data/knowledge-articles.json").then((res) => res.json()),
-      fetch("data/downloads.json").then((res) => res.json()),
+      fetch("data/updates.json").then((res) => {
+        if (!res.ok)
+          throw new Error(`HTTP error! status: ${res.status} for updates.json`);
+        return res.json();
+      }),
+      fetch("data/knowledge-articles.json").then((res) => {
+        if (!res.ok)
+          throw new Error(
+            `HTTP error! status: ${res.status} for knowledge-articles.json`
+          );
+        return res.json();
+      }),
+      fetch("data/downloads.json").then((res) => {
+        if (!res.ok)
+          throw new Error(
+            `HTTP error! status: ${res.status} for downloads.json`
+          );
+        return res.json();
+      }),
     ])
       .then(([updates, knowledgeArticles, downloads]) => {
         renderContent(
@@ -388,20 +405,11 @@ document.addEventListener("DOMContentLoaded", () => {
           fetch("data/knowledge-articles.json").then((res) => res.json()),
           fetch("data/downloads.json").then((res) => res.json()),
         ]).then(([updates, knowledgeArticles, downloads]) => {
-          const sortItems = (items) => {
-            const pinned = items
-              .filter((item) => item.pinned)
-              .sort((a, b) => new Date(b.date) - new Date(a.date));
-            const nonPinned = items
-              .filter((item) => !item.pinned)
-              .sort((a, b) => new Date(b.date) - new Date(a.date));
-            return [...pinned, ...nonPinned];
-          };
-          if (tabId === "updates") renderContent(sortItems(updates), [], []);
-          else if (tabId === "knowledge-articles")
-            renderContent([], sortItems(knowledgeArticles), []);
-          else if (tabId === "downloads")
-            renderContent([], [], sortItems(downloads));
+          renderContent(
+            sortItems(updates),
+            sortItems(knowledgeArticles),
+            sortItems(downloads)
+          );
         });
       }
     });
