@@ -39,20 +39,11 @@
   min-width: 150px;
   max-height: 200px; /* Retain scrollable height */
   overflow-y: auto; /* Ensure scrollability for >12 tags */
-  /* [NEW] Added from your code: Style options for better dropdown appearance */
-  /* [NEW] Note: Option styling may not affect dropdown container due to browser limitations */
-  /* [NEW] Added from your code: Attempt to remove default appearance for better control */
-  -webkit-appearance: none; /* Safari/Chrome */
-  -moz-appearance: none; /* Firefox */
-  appearance: none;
+  /* [REVERTED] Removed -webkit-appearance: none; -moz-appearance: none; appearance: none; to restore default dropdown arrow */
 }
 
 #tag-select option {
-  /* [NEW] Added from your code: Style individual options with rounded corners */
-  border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  padding: 8px;
+  /* [REVERTED] Removed border-radius and padding styling for options since it doesn't affect the dropdown container */
 }
 
 #search-input {
@@ -373,27 +364,9 @@
     box-sizing: border-box; /* Include padding in width calculation */
   }
 
-  /* [NEW] Added from your code: Enhanced mobile dropdown styling */
-  #tag-select {
-    -webkit-appearance: none; /* Safari/Chrome */
-    -moz-appearance: none; /* Firefox */
-    appearance: none;
-    border-radius: 5px;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-  }
+  /* [REVERTED] Removed -webkit-appearance: none; -moz-appearance: none; appearance: none; and related mobile-specific styling to restore default dropdown arrow */
+  /* [REVERTED] Removed #tag-select option styling for mobile since it doesn't affect the container */
 
-  /* [NEW] Added from your code: Style individual options for mobile */
-  #tag-select option {
-    border-radius: 5px;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    padding: 10px;
-    background-color: #fff;
-    color: #333;
-  }
-
-  /* [NEW] Modified from your code: Fix clear button centering */
   .clear-button {
     width: 60%; /* Retain 60% width */
     max-width: 60%; /* Prevent stretching beyond 60% */
