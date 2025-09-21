@@ -60,7 +60,8 @@ nav ul li a {
 }
 
 nav ul li a.active {
-  font-weight: bold;
+  color: #1a73e8; /* Subtle blue for active state */
+  text-decoration: underline; /* Optional: adds a visual cue */
 }
 
 .hamburger {
