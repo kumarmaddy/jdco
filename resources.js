@@ -124,15 +124,22 @@ document.addEventListener("DOMContentLoaded", () => {
     container.appendChild(div);
   }
 
-  // Sort items
+  // Sort items with pinned items first, then by rank and date
   function sortItems(items) {
-    const pinned = items
-      .filter((item) => item.pinned)
-      .sort((a, b) => b.rank - a.rank);
-    const nonPinned = items
-      .filter((item) => !item.pinned)
-      .sort((a, b) => b.rank - a.rank);
-    return [...pinned, ...nonPinned];
+    return [
+      ...items
+        .filter((item) => item.pinned)
+        .sort((a, b) => {
+          if (a.rank !== b.rank) return b.rank - a.rank;
+          return new Date(b.date) - new Date(a.date);
+        }),
+      ...items
+        .filter((item) => !item.pinned)
+        .sort((a, b) => {
+          if (a.rank !== b.rank) return b.rank - a.rank;
+          return new Date(b.date) - new Date(a.date);
+        }),
+    ];
   }
 
   // Load content from JSON files
