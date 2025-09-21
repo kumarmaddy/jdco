@@ -150,8 +150,17 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       contents.forEach((content) => content.classList.remove("active"));
       tabs.forEach((tab) => tab.classList.remove("disabled"));
-      document.getElementById("updates").classList.add("active");
-      tabs[0].classList.add("active"); // Activate Updates tab
+      const activeTab = document.querySelector(".resource-tab.active");
+      if (!activeTab) tabs[0].classList.add("active"); // Default to Updates
+      const activeTabId = document
+        .querySelector(".resource-tab.active")
+        ?.getAttribute("data-tab");
+      if (activeTabId === "updates")
+        document.getElementById("updates").classList.add("active");
+      else if (activeTabId === "knowledge-articles")
+        document.getElementById("knowledge-articles").classList.add("active");
+      else if (activeTabId === "downloads")
+        document.getElementById("downloads").classList.add("active");
 
       const searchResults = document.getElementById("search-results");
       if (searchResults) searchResults.remove();
@@ -296,44 +305,29 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     };
 
-    Promise.all([
-      fetch("data/updates.json").then((res) => {
-        if (!res.ok)
-          throw new Error(`Failed to fetch updates.json: ${res.status}`);
-        return res.json();
-      }),
-      fetch("data/knowledge-articles.json").then((res) => {
-        if (!res.ok)
-          throw new Error(
-            `Failed to fetch knowledge-articles.json: ${res.status}`
-          );
-        return res.json();
-      }),
-      fetch("data/downloads.json").then((res) => {
-        if (!res.ok)
-          throw new Error(`Failed to fetch downloads.json: ${res.status}`);
-        return res.json();
-      }),
-    ])
-      .then(([updates, knowledgeArticles, downloads]) => {
-        const sortItems = (items) => {
-          const pinned = items
-            .filter((item) => item.pinned)
-            .sort(
-              (a, b) =>
-                new Date(b.date || "1970-01-01") -
-                new Date(a.date || "1970-01-01")
-            );
-          const nonPinned = items
-            .filter((item) => !item.pinned)
-            .sort(
-              (a, b) =>
-                new Date(b.date || "1970-01-01") -
-                new Date(a.date || "1970-01-01")
-            );
-          return [...pinned, ...nonPinned];
-        };
-        if (searchInput || selectedTag) {
+    const sortItems = (items) => {
+      const pinned = items
+        .filter((item) => item.pinned)
+        .sort(
+          (a, b) =>
+            new Date(b.date || "1970-01-01") - new Date(a.date || "1970-01-01")
+        );
+      const nonPinned = items
+        .filter((item) => !item.pinned)
+        .sort(
+          (a, b) =>
+            new Date(b.date || "1970-01-01") - new Date(a.date || "1970-01-01")
+        );
+      return [...pinned, ...nonPinned];
+    };
+
+    if (searchInput || selectedTag) {
+      Promise.all([
+        fetch("data/updates.json").then((res) => res.json()),
+        fetch("data/knowledge-articles.json").then((res) => res.json()),
+        fetch("data/downloads.json").then((res) => res.json()),
+      ])
+        .then(([updates, knowledgeArticles, downloads]) => {
           renderContent(
             sortItems(updates),
             sortItems(knowledgeArticles),
@@ -343,11 +337,8 @@ document.addEventListener("DOMContentLoaded", () => {
           const searchResultsContent = document.getElementById(
             "search-results-content"
           );
-          const filteredItems = filterItems([
-            ...updates,
-            ...knowledgeArticles,
-            ...downloads,
-          ]);
+          const allData = [...updates, ...knowledgeArticles, ...downloads];
+          const filteredItems = filterItems(allData);
           searchResultsContent.innerHTML = ""; // Clear to prevent duplication
           filteredItems.forEach((item) =>
             renderItem(item, searchResultsContent)
@@ -357,7 +348,19 @@ document.addEventListener("DOMContentLoaded", () => {
             "Clear button activated, classes:",
             clearButton.classList
           );
-        } else {
+        })
+        .catch((error) => {
+          console.error("Error filtering content:", error);
+          document.getElementById("search-results-content").innerHTML =
+            "<p>Error filtering content. Please try again later.</p>";
+        });
+    } else {
+      Promise.all([
+        fetch("data/updates.json").then((res) => res.json()),
+        fetch("data/knowledge-articles.json").then((res) => res.json()),
+        fetch("data/downloads.json").then((res) => res.json()),
+      ])
+        .then(([updates, knowledgeArticles, downloads]) => {
           renderContent(
             sortItems(updates),
             sortItems(knowledgeArticles),
@@ -368,17 +371,17 @@ document.addEventListener("DOMContentLoaded", () => {
             "Clear button deactivated, classes:",
             clearButton.classList
           );
-        }
-      })
-      .catch((error) => {
-        console.error("Error filtering content:", error);
-        document.getElementById("updates-content").innerHTML =
-          "<p>Error filtering content. Please try again later.</p>";
-        document.getElementById("knowledge-articles-content").innerHTML =
-          "<p>Error filtering content. Please try again later.</p>";
-        document.getElementById("downloads-content").innerHTML =
-          "<p>Error filtering content. Please try again later.</p>";
-      });
+        })
+        .catch((error) => {
+          console.error("Error loading content:", error);
+          document.getElementById("updates-content").innerHTML =
+            "<p>Error loading content. Please try again later.</p>";
+          document.getElementById("knowledge-articles-content").innerHTML =
+            "<p>Error loading content. Please try again later.</p>";
+          document.getElementById("downloads-content").innerHTML =
+            "<p>Error loading content. Please try again later.</p>";
+        });
+    }
   };
 
   // Sidebar navigation
