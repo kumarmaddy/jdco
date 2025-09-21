@@ -349,3 +349,25 @@
     padding: 2px;
   }
 }
+
+.clear-button {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.clear-button:hover {
+  background-color: #f5f5f5;
+}
+
+#search-results {
+  display: none;
+}
+
+#search-results.active {
+  display: block;
+}
