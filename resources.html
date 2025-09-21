@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Explore updates, knowledge articles, and downloadable resources from Jayadeva & Co., Bengaluru’s top chartered accountants and tax consultants."
+      content="Explore updates, knowledge articles, and downloadable resources from Jayadeva & Co., Bengaluru's top chartered accountants and tax consultants."
     />
     <title>Jayadeva & Co.</title>
     <link rel="stylesheet" href="styles.css" />
@@ -20,8 +20,10 @@
     <header class="sticky-header">
       <div class="container">
         <div class="logo">
-          <h1>Jayadeva & Co.</h1>
-          <p>Tax | Assurance | Advisory</p>
+          <a href="index.html">
+            <h1>Jayadeva & Co.</h1>
+            <p>Tax | Assurance | Advisory</p>
+          </a>
         </div>
         <nav>
           <button class="hamburger" aria-label="Toggle navigation">
@@ -45,9 +47,7 @@
           <div class="resources-header">
             <h2>Resources & Insights</h2>
             <div class="filter-container">
-              <select id="tag-select" aria-label="Filter by tag">
-                <option value="">All Tags</option>
-              </select>
+              <div id="tag-filter" class="tag-filter"></div>
               <input
                 type="text"
                 id="search-input"
@@ -58,6 +58,7 @@
           </div>
           <div class="resources-main">
             <div class="resources-sidebar">
+              <h3>Sections</h3>
               <ul class="resources-menu">
                 <li>
                   <button class="resource-tab active" data-tab="updates">
@@ -78,29 +79,20 @@
             </div>
             <div class="resources-content">
               <div id="updates" class="resource-details active">
-                <h3>Updates</h3>
-                <p>
-                  Stay informed with the latest news and regulatory changes.
-                </p>
                 <div id="updates-content"></div>
               </div>
               <div id="knowledge-articles" class="resource-details">
-                <h3>Knowledge Articles</h3>
-                <p>
-                  Timeless insights to help you navigate tax and business
-                  challenges.
-                </p>
                 <div id="knowledge-articles-content"></div>
               </div>
               <div id="downloads" class="resource-details">
-                <h3>Downloads</h3>
-                <p>Access sample reports and other valuable resources.</p>
                 <div id="downloads-content"></div>
               </div>
+              <div id="all-results" class="resource-details"></div>
             </div>
           </div>
           <div class="popup" id="resource-popup">
             <div class="popup-content">
+              <button class="close-button" aria-label="Close popup">×</button>
               <div id="popup-content"></div>
             </div>
           </div>

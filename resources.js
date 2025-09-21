@@ -22,14 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
     console.error("showdown.js not loaded");
   }
 
-  // Function to convert markdown links manually
-  function convertMarkdownLinks(text) {
-    return text.replace(
-      /\[(.*?)\]\((.*?)\)/g,
-      '<a href="$2" target="_blank" style="color: #1a73e8; text-decoration: underline;">$1</a>'
-    );
-  }
-
   // Load content from JSON files
   const loadContent = async () => {
     try {
@@ -70,9 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
       console.log("All items:", allItems);
 
       // Collect unique tags
-      allTags = [
-        ...new Set(allItems.flatMap((item) => item.tags || [])),
-      ].sort();
+      allTags = [...new Set(allItems.flatMap((item) => item.tags || []))];
       console.log("All tags:", allTags);
 
       // Populate tag dropdown
@@ -140,12 +130,14 @@ document.addEventListener("DOMContentLoaded", () => {
       div.dataset.id = `${item.section}-${item.title}`;
       const contentText =
         item.content || item.description || "No content available";
-      // Extract first two lines for preview, join with space, and convert links manually
+      // Extract first two lines for preview, join with space to avoid extra line breaks
       const lines = contentText.split("\n").slice(0, 2).join(" ");
-      const previewText = convertMarkdownLinks(lines);
+      const previewText =
+        typeof showdown !== "undefined"
+          ? window.markdownConverter.makeHtml(lines)
+          : lines;
       console.log("Preview content:", previewText);
       const tagsHtml = (item.tags || [])
-        .sort()
         .map((tag) => `<span class="tag">${tag}</span>`)
         .join("");
       const pinnedIcon = item.pinned
@@ -212,7 +204,6 @@ document.addEventListener("DOMContentLoaded", () => {
       .join("");
     console.log("Final HTML:", paragraphs);
     const tagsHtml = (item.tags || [])
-      .sort()
       .map((tag) => `<span class="tag">${tag}</span>`)
       .join("");
     const pinnedIcon = item.pinned
