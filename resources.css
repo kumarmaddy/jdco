@@ -365,7 +365,7 @@
 }
 
 .clear-button.active {
-  background-color: #000 !important; /* Added !important for testing */
+  background-color: #000 !important; /* !important to ensure override */
   color: #fff;
 }
 

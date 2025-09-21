@@ -94,7 +94,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return [...pinned, ...nonPinned];
       };
 
-      // Initial render for all sections
       renderContent(
         sortItems(updates),
         sortItems(knowledgeArticles),
@@ -129,7 +128,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (isSearch) {
       contents.forEach((content) => content.classList.remove("active"));
-      tabs.forEach((tab) => tab.classList.remove("active", "disabled"));
+      tabs.forEach((tab) => {
+        tab.classList.remove("active");
+        tab.classList.add("disabled");
+      });
       let searchResults = document.getElementById("search-results");
       if (!searchResults) {
         searchResults = document.createElement("div");
@@ -148,17 +150,8 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       contents.forEach((content) => content.classList.remove("active"));
       tabs.forEach((tab) => tab.classList.remove("disabled"));
-      const activeTab = document.querySelector(".resource-tab.active");
-      if (!activeTab) tabs[0].classList.add("active"); // Default to Updates
-      const activeTabId = document
-        .querySelector(".resource-tab.active")
-        ?.getAttribute("data-tab");
-      if (activeTabId === "updates")
-        document.getElementById("updates").classList.add("active");
-      else if (activeTabId === "knowledge-articles")
-        document.getElementById("knowledge-articles").classList.add("active");
-      else if (activeTabId === "downloads")
-        document.getElementById("downloads").classList.add("active");
+      document.getElementById("updates").classList.add("active");
+      tabs[0].classList.add("active"); // Activate Updates tab
 
       const searchResults = document.getElementById("search-results");
       if (searchResults) searchResults.remove();
@@ -280,130 +273,91 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Filter items across all sections
-  const filterItems = (items) => {
-    const searchText = searchInput.value
-      .toLowerCase()
-      .split(/\s+/)
-      .filter(Boolean);
-    const selectedTag = tagSelect.value;
-    return items.filter((item) => {
-      const textContent =
-        (item.title || "").toLowerCase() +
-        " " +
-        (item.content || "").toLowerCase() +
-        " " +
-        (item.description || "").toLowerCase() +
-        " " +
-        (item.tags || []).join(" ").toLowerCase();
-      const matchesSearch =
-        !searchText.length ||
-        searchText.every((keyword) => textContent.includes(keyword));
-      const matchesTag =
-        !selectedTag || (item.tags || []).includes(selectedTag);
-      return matchesSearch && matchesTag;
-    });
-  };
-
-  // Sort items based on filter type
-  const sortItems = (items, isTagFilter) => {
-    const pinned = items
-      .filter((item) => item.pinned)
-      .sort((a, b) => new Date(b.date) - new Date(a.date));
-    const nonPinned = items.filter((item) => !item.pinned);
-    if (isTagFilter) {
-      return [
-        ...pinned,
-        ...nonPinned.sort((a, b) => new Date(b.date) - new Date(a.date)),
-      ];
-    } else {
-      const searchText = searchInput.value
-        .toLowerCase()
-        .split(/\s+/)
-        .filter(Boolean);
-      const rankItem = (item) => {
-        const textContent =
-          (item.title || "").toLowerCase() +
-          " " +
-          (item.content || "").toLowerCase() +
-          " " +
-          (item.description || "").toLowerCase() +
-          " " +
-          (item.tags || []).join(" ").toLowerCase();
-        return searchText.reduce(
-          (score, keyword) => score + (textContent.includes(keyword) ? 1 : 0),
-          0
-        );
-      };
-      return [
-        ...pinned,
-        ...nonPinned.sort((a, b) => {
-          const rankA = rankItem(a);
-          const rankB = rankItem(b);
-          if (rankA !== rankB) return rankB - rankA;
-          return new Date(b.date) - new Date(a.date);
-        }),
-      ];
-    }
-  };
-
-  // Filter and render content
+  // Filter content by search and tag
   const filterContent = () => {
-    const searchText = searchInput.value.trim();
-    const selectedTag = tagSelect.value;
-    const hasFilter = searchText !== "" || selectedTag !== "";
+    const searchInput = document
+      .getElementById("search-input")
+      .value.toLowerCase();
+    const selectedTag = document.getElementById("tag-select").value;
 
-    // Mutual exclusivity
-    if (searchText) {
-      tagSelect.disabled = true;
-    } else if (selectedTag) {
-      searchInput.value = "";
-      searchInput.disabled = true;
-    } else {
-      tagSelect.disabled = false;
-      searchInput.disabled = false;
-    }
+    const filterItems = (items) => {
+      return items.filter((item) => {
+        const matchesSearch =
+          !searchInput ||
+          (item.title || "").toLowerCase().includes(searchInput) ||
+          (item.content || "").toLowerCase().includes(searchInput) ||
+          (item.description || "").toLowerCase().includes(searchInput) ||
+          (item.tags || []).some((tag) =>
+            tag.toLowerCase().includes(searchInput)
+          );
+        const matchesTag =
+          !selectedTag || (item.tags || []).includes(selectedTag);
+        return matchesSearch && matchesTag;
+      });
+    };
 
-    if (hasFilter) {
-      renderContent([], [], [], true);
-      const searchResultsContent = document.getElementById(
-        "search-results-content"
-      );
-      searchResultsContent.innerHTML = ""; // Clear to prevent duplication
-      const filteredItems = sortItems(filterItems(allItems), !!selectedTag);
-      filteredItems.forEach((item) => renderItem(item, searchResultsContent));
-      clearButton.classList.add("active");
-      console.log("Clear button activated, classes:", clearButton.classList);
-    } else {
-      Promise.all([
-        fetch("data/updates.json").then((res) => {
-          if (!res.ok)
-            throw new Error(`Failed to fetch updates.json: ${res.status}`);
-          return res.json();
-        }),
-        fetch("data/knowledge-articles.json").then((res) => {
-          if (!res.ok)
-            throw new Error(
-              `Failed to fetch knowledge-articles.json: ${res.status}`
+    Promise.all([
+      fetch("data/updates.json").then((res) => {
+        if (!res.ok)
+          throw new Error(`Failed to fetch updates.json: ${res.status}`);
+        return res.json();
+      }),
+      fetch("data/knowledge-articles.json").then((res) => {
+        if (!res.ok)
+          throw new Error(
+            `Failed to fetch knowledge-articles.json: ${res.status}`
+          );
+        return res.json();
+      }),
+      fetch("data/downloads.json").then((res) => {
+        if (!res.ok)
+          throw new Error(`Failed to fetch downloads.json: ${res.status}`);
+        return res.json();
+      }),
+    ])
+      .then(([updates, knowledgeArticles, downloads]) => {
+        const sortItems = (items) => {
+          const pinned = items
+            .filter((item) => item.pinned)
+            .sort(
+              (a, b) =>
+                new Date(b.date || "1970-01-01") -
+                new Date(a.date || "1970-01-01")
             );
-          return res.json();
-        }),
-        fetch("data/downloads.json").then((res) => {
-          if (!res.ok)
-            throw new Error(`Failed to fetch downloads.json: ${res.status}`);
-          return res.json();
-        }),
-      ])
-        .then(([updates, knowledgeArticles, downloads]) => {
-          const sortItems = (items) => {
-            const pinned = items
-              .filter((item) => item.pinned)
-              .sort((a, b) => new Date(b.date) - new Date(a.date));
-            const nonPinned = items
-              .filter((item) => !item.pinned)
-              .sort((a, b) => new Date(b.date) - new Date(a.date));
-            return [...pinned, ...nonPinned];
-          };
+          const nonPinned = items
+            .filter((item) => !item.pinned)
+            .sort(
+              (a, b) =>
+                new Date(b.date || "1970-01-01") -
+                new Date(a.date || "1970-01-01")
+            );
+          return [...pinned, ...nonPinned];
+        };
+        if (searchInput || selectedTag) {
+          renderContent(
+            sortItems(updates),
+            sortItems(knowledgeArticles),
+            sortItems(downloads),
+            true
+          );
+          const searchResultsContent = document.getElementById(
+            "search-results-content"
+          );
+          const filteredItems = filterItems([
+            ...updates,
+            ...knowledgeArticles,
+            ...downloads,
+          ]);
+          searchResultsContent.innerHTML = ""; // Clear to prevent duplication
+          filteredItems.forEach((item) =>
+            renderItem(item, searchResultsContent)
+          );
+          clearButton.classList.add("active");
+          console.log(
+            "Clear button activated, classes:",
+            clearButton.classList
+          );
+        } else {
           renderContent(
             sortItems(updates),
             sortItems(knowledgeArticles),
@@ -414,17 +368,17 @@ document.addEventListener("DOMContentLoaded", () => {
             "Clear button deactivated, classes:",
             clearButton.classList
           );
-        })
-        .catch((error) => {
-          console.error("Error loading content:", error);
-          document.getElementById("updates-content").innerHTML =
-            "<p>Error loading content. Please try again later.</p>";
-          document.getElementById("knowledge-articles-content").innerHTML =
-            "<p>Error loading content. Please try again later.</p>";
-          document.getElementById("downloads-content").innerHTML =
-            "<p>Error loading content. Please try again later.</p>";
-        });
-    }
+        }
+      })
+      .catch((error) => {
+        console.error("Error filtering content:", error);
+        document.getElementById("updates-content").innerHTML =
+          "<p>Error filtering content. Please try again later.</p>";
+        document.getElementById("knowledge-articles-content").innerHTML =
+          "<p>Error filtering content. Please try again later.</p>";
+        document.getElementById("downloads-content").innerHTML =
+          "<p>Error filtering content. Please try again later.</p>";
+      });
   };
 
   // Sidebar navigation
@@ -468,8 +422,6 @@ document.addEventListener("DOMContentLoaded", () => {
   clearButton.addEventListener("click", () => {
     searchInput.value = "";
     tagSelect.value = "";
-    tagSelect.disabled = false;
-    searchInput.disabled = false;
     filterContent();
   });
   searchWrapper.appendChild(clearButton);
