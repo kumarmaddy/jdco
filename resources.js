@@ -86,22 +86,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const sortItems = (items) => {
         const pinned = items
-          .filter((item) => item.pinned === true)
-          .sort(
-            (a, b) =>
-              new Date(b.date || "1970-01-01") -
-              new Date(a.date || "1970-01-01")
-          );
+          .filter((item) => item.pinned)
+          .sort((a, b) => new Date(b.date) - new Date(a.date));
         const nonPinned = items
           .filter((item) => !item.pinned)
-          .sort(
-            (a, b) =>
-              new Date(b.date || "1970-01-01") -
-              new Date(a.date || "1970-01-01")
-          );
+          .sort((a, b) => new Date(b.date) - new Date(a.date));
         return [...pinned, ...nonPinned];
       };
 
+      // Initial render for all sections
       renderContent(
         sortItems(updates),
         sortItems(knowledgeArticles),
@@ -157,8 +150,18 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       contents.forEach((content) => content.classList.remove("active"));
       tabs.forEach((tab) => tab.classList.remove("disabled"));
-      document.getElementById("updates").classList.add("active");
-      tabs[0].classList.add("active"); // Activate Updates tab
+      const activeTab = document.querySelector(".resource-tab.active");
+      if (!activeTab) tabs[0].classList.add("active"); // Default to Updates
+      const activeTabId = document
+        .querySelector(".resource-tab.active")
+        ?.getAttribute("data-tab");
+      if (activeTabId === "updates")
+        document.getElementById("updates").classList.add("active");
+      else if (activeTabId === "knowledge-articles")
+        document.getElementById("knowledge-articles").classList.add("active");
+      else if (activeTabId === "downloads")
+        document.getElementById("downloads").classList.add("active");
+
       const searchResults = document.getElementById("search-results");
       if (searchResults) searchResults.remove();
 
@@ -284,7 +287,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchText = searchInput.value
       .toLowerCase()
       .split(/\s+/)
-      .filter(Boolean); // Split into keywords
+      .filter(Boolean);
     const selectedTag = tagSelect.value;
     return items.filter((item) => {
       const textContent =
@@ -342,8 +345,8 @@ document.addEventListener("DOMContentLoaded", () => {
         ...nonPinned.sort((a, b) => {
           const rankA = rankItem(a);
           const rankB = rankItem(b);
-          if (rankA !== rankB) return rankB - rankA; // Higher rank first
-          return new Date(b.date) - new Date(a.date); // Then by date
+          if (rankA !== rankB) return rankB - rankA;
+          return new Date(b.date) - new Date(a.date);
         }),
       ];
     }
@@ -355,7 +358,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const selectedTag = tagSelect.value;
     const hasFilter = searchText !== "" || selectedTag !== "";
 
-    // Mutual exclusivity: Disable tag select when search is active, and vice versa
+    // Mutual exclusivity
     if (searchText) {
       tagSelect.disabled = true;
     } else if (selectedTag) {
@@ -372,8 +375,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const searchResultsContent = document.getElementById(
         "search-results-content"
       );
+      searchResultsContent.innerHTML = ""; // Ensure no duplication
       filteredItems.forEach((item) => renderItem(item, searchResultsContent));
       clearButton.classList.add("active");
+      console.log("Clear button activated:", clearButton.classList);
     } else {
       Promise.all([
         fetch("data/updates.json").then((res) => {
@@ -410,6 +415,7 @@ document.addEventListener("DOMContentLoaded", () => {
             sortItems(downloads)
           );
           clearButton.classList.remove("active");
+          console.log("Clear button deactivated:", clearButton.classList);
         })
         .catch((error) => {
           console.error("Error loading content:", error);
@@ -432,7 +438,27 @@ document.addEventListener("DOMContentLoaded", () => {
         tab.classList.add("active");
         const tabId = tab.getAttribute("data-tab");
         document.getElementById(tabId).classList.add("active");
-        filterContent();
+        // Reload content for the selected tab
+        Promise.all([
+          fetch("data/updates.json").then((res) => res.json()),
+          fetch("data/knowledge-articles.json").then((res) => res.json()),
+          fetch("data/downloads.json").then((res) => res.json()),
+        ]).then(([updates, knowledgeArticles, downloads]) => {
+          const sortItems = (items) => {
+            const pinned = items
+              .filter((item) => item.pinned)
+              .sort((a, b) => new Date(b.date) - new Date(a.date));
+            const nonPinned = items
+              .filter((item) => !item.pinned)
+              .sort((a, b) => new Date(b.date) - new Date(a.date));
+            return [...pinned, ...nonPinned];
+          };
+          if (tabId === "updates") renderContent(sortItems(updates), [], []);
+          else if (tabId === "knowledge-articles")
+            renderContent([], sortItems(knowledgeArticles), []);
+          else if (tabId === "downloads")
+            renderContent([], [], sortItems(downloads));
+        });
       }
     });
   });
