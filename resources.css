@@ -44,7 +44,7 @@
   font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  width: 200px;
+  width: 250px; /* Increased width for desktop to show full placeholder */
 }
 
 .resources-main {
@@ -319,7 +319,9 @@
 
   #tag-select,
   #search-input {
-    width: 100%;
+    width: 100%; /* Match widths on mobile */
+    max-width: 100%; /* Prevent stretching beyond screen */
+    box-sizing: border-box; /* Include padding in width calculation */
   }
 
   .resources-main {
