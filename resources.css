@@ -29,8 +29,8 @@
 #tag-select {
   padding: 10px;
   font-size: 16px;
-  border: 1px solid #ccc; /* Ensure border on all sides */
-  border-radius: 5px;
+  border: 1px solid #ccc; /* Retain borders on all sides */
+  border-radius: 5px; /* Add rounded corners */
   background-color: #fff;
   cursor: pointer;
   width: auto;
@@ -315,6 +315,7 @@
     flex-direction: column;
     align-items: center; /* Center align the container */
     width: 100%;
+    padding: 0 20%; /* 20% left and right margins */
   }
 
   #tag-select,
@@ -325,11 +326,11 @@
   }
 
   .clear-button {
-    width: 100%; /* Match width with other inputs */
-    max-width: 100%; /* Prevent stretching beyond screen */
+    width: 60%; /* Set to 60% width */
+    max-width: 60%; /* Prevent stretching beyond 60% */
     box-sizing: border-box; /* Include padding in width calculation */
     text-align: center; /* Center the button text */
-    margin-top: 10px; /* Add spacing above clear button */
+    margin: 10px auto 0; /* Center the button with auto margins and add top spacing */
   }
 
   .resources-main {
