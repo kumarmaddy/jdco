@@ -30,7 +30,7 @@
   padding: 10px;
   font-size: 16px;
   border: 1px solid #ccc; /* Retain borders on all sides */
-  border-radius: 5px; /* Add rounded corners */
+  border-radius: 5px; /* Reinforce rounded corners */
   background-color: #fff;
   cursor: pointer;
   width: auto;
@@ -313,9 +313,8 @@
 
   .filter-container {
     flex-direction: column;
-    align-items: center; /* Center align the container */
+    align-items: stretch; /* Revert to stretch to align filter and search naturally */
     width: 100%;
-    padding: 0 20%; /* 20% left and right margins */
   }
 
   #tag-select,
