@@ -336,24 +336,44 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     if (searchText || selectedTag) {
-      renderContent(
-        sortItems(allItems.filter((i) => i.section === "updates")),
-        sortItems(allItems.filter((i) => i.section === "knowledge-articles")),
-        sortItems(allItems.filter((i) => i.section === "downloads")),
-        true
-      );
-      const searchResultsContent = document.getElementById(
-        "search-results-content"
-      );
-      const filteredItems = filterItems(allItems);
-      searchResultsContent.innerHTML = ""; // Clear to prevent duplication
-      if (filteredItems.length > 0) {
-        filteredItems.forEach((item) => renderItem(item, searchResultsContent));
-      } else {
-        searchResultsContent.innerHTML = "<p>No results found.</p>";
-      }
-      clearButton.classList.add("active");
-      console.log("Filtered items count:", filteredItems.length); // Debug log
+      Promise.all([
+        fetch("data/updates.json").then((res) => res.json()),
+        fetch("data/knowledge-articles.json").then((res) => res.json()),
+        fetch("data/downloads.json").then((res) => res.json()),
+      ])
+        .then(([updates, knowledgeArticles, downloads]) => {
+          renderContent(
+            sortItems(updates),
+            sortItems(knowledgeArticles),
+            sortItems(downloads),
+            true
+          );
+          const searchResultsContent = document.getElementById(
+            "search-results-content"
+          );
+          const allData = [...updates, ...knowledgeArticles, ...downloads];
+          const filteredItems = filterItems(allData);
+          searchResultsContent.innerHTML = ""; // Clear to prevent duplication
+          if (filteredItems.length > 0) {
+            filteredItems.forEach((item) =>
+              renderItem(item, searchResultsContent)
+            );
+          } else {
+            searchResultsContent.innerHTML = "<p>No results found.</p>";
+          }
+          clearButton.classList.add("active");
+          console.log("Filtered items count:", filteredItems.length); // Debug log
+        })
+        .catch((error) => {
+          console.error("Error filtering content:", error);
+          const searchResultsContent = document.getElementById(
+            "search-results-content"
+          );
+          if (searchResultsContent) {
+            searchResultsContent.innerHTML =
+              "<p>Error filtering content. Please try again later or check console for details.</p>";
+          }
+        });
     } else {
       Promise.all([
         fetch("data/updates.json").then((res) => res.json()),
