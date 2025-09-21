@@ -33,25 +33,43 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   }
 
-  // Filter items based on search text and tag
+  // Filter items based on search text and tag with ranking
   function filterItems(items, searchText, selectedTag) {
-    return items.filter((item) => {
-      const textContent =
-        (item.title || "").toLowerCase() +
-        " " +
-        (item.content || "").toLowerCase() +
-        " " +
-        (item.description || "").toLowerCase() +
-        " " +
-        (item.tags || []).join(" ").toLowerCase();
-      const matchesSearch = !searchText || textContent.includes(searchText);
-      const matchesTag =
-        !selectedTag || (item.tags || []).includes(selectedTag);
-      console.log(
-        `Item: ${item.title}, Matches Search: ${matchesSearch}, Matches Tag: ${matchesTag}`
-      ); // Debug log
-      return matchesSearch && matchesTag;
-    });
+    const searchWords = searchText
+      .trim()
+      .toLowerCase()
+      .split(/\s+/)
+      .filter((word) => word.length > 0);
+    return items
+      .map((item) => {
+        let rank = 0;
+        const textContent =
+          (item.title || "").toLowerCase() +
+          " " +
+          (item.content || "").toLowerCase() +
+          " " +
+          (item.description || "").toLowerCase() +
+          " " +
+          (item.tags || []).join(" ").toLowerCase();
+
+        searchWords.forEach((word) => {
+          if (textContent.includes(word)) rank++;
+          if ((item.tags || []).some((tag) => tag.toLowerCase().includes(word)))
+            rank += 2; // Higher weight for tags
+          if ((item.title || "").toLowerCase().includes(word)) rank += 3; // Highest weight for title
+        });
+
+        return { ...item, rank };
+      })
+      .filter((item) => {
+        const matchesTag =
+          !selectedTag || (item.tags || []).includes(selectedTag);
+        const matchesSearch = searchWords.length === 0 || item.rank > 0;
+        console.log(
+          `Item: ${item.title}, Rank: ${item.rank}, Matches Tag: ${matchesTag}, Matches Search: ${matchesSearch}`
+        ); // Debug log
+        return matchesTag && matchesSearch;
+      });
   }
 
   // Render a single item
@@ -110,10 +128,10 @@ document.addEventListener("DOMContentLoaded", () => {
   function sortItems(items) {
     const pinned = items
       .filter((item) => item.pinned)
-      .sort((a, b) => new Date(b.date) - new Date(a.date));
+      .sort((a, b) => b.rank - a.rank);
     const nonPinned = items
       .filter((item) => !item.pinned)
-      .sort((a, b) => new Date(b.date) - new Date(a.date));
+      .sort((a, b) => b.rank - a.rank);
     return [...pinned, ...nonPinned];
   }
 
@@ -252,14 +270,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (isSearch) {
       const allData = [...updates, ...knowledgeArticles, ...downloads];
-      const filteredItems = filterItems(
-        allData,
-        searchInput.value.trim().toLowerCase(),
-        tagSelect.value
-      );
-      console.log("Filtered items count:", filteredItems.length); // Debug log
-      if (filteredItems.length > 0) {
-        filteredItems.forEach((item) => renderItem(item, searchResultsContent));
+      const sortedItems = sortItems(allData);
+      console.log("Filtered items count:", sortedItems.length); // Debug log
+      if (sortedItems.length > 0) {
+        sortedItems.forEach((item) => renderItem(item, searchResultsContent));
       } else {
         searchResultsContent.innerHTML = "<p>No results found.</p>";
       }
